@@ -57,6 +57,8 @@ function App() {
                 await sleep(300);
             }
 
+            setCurrentRowIndex(prev => prev + 1);
+
             if (currentGuess.join("").toUpperCase() == answer.toUpperCase()) {
                 setIsGameActive(false);
                 setDidUserWin(true);
@@ -74,7 +76,6 @@ function App() {
                 }
             }
 
-            setCurrentRowIndex(prev => prev + 1);
             setCurrentGuess([]);
 
             if (currentRowIndex >= MAX_GUESSES - 1) {
@@ -133,9 +134,9 @@ function App() {
 
     return (
         <div className="App">
-            <h1 className="title">Wordle</h1>
+            <h1 className="title prevent-select">Wordle</h1>
 
-            {!isGameActive && <span className="comment">{getComment()}</span>}
+            {!isGameActive && <span className="comment prevent-select">{getComment()}</span>}
 
             <main>
                 <div className="board">

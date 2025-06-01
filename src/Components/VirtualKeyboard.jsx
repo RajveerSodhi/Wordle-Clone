@@ -6,10 +6,22 @@ function VirtualKeyboard() {
     ];
 
     return (
-        <div>
-            <div>
-
-            </div>
+        <div className="keyboard">
+            {
+                keyRows.map((row, i) => {
+                    return (
+                        <div className="keyrow" key={i}>
+                            {
+                                row.map((letter, j) => {
+                                    return (
+                                        <button className="key" key={j}>{letter}</button>
+                                    );
+                                })
+                            }
+                        </div>
+                    );
+                })
+            }
         </div>
     );
 }
