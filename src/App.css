@@ -1,38 +1,126 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  height: 100vh;
+  background-color: #121213;
   display: flex;
   flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.comment {
+  position: absolute;
+  top: 6rem;
+  border-radius: 8px;
+  background-color: white;
+  padding: 0.75rem;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.title {
+  text-transform: uppercase;
+  color: white;
+  letter-spacing: 0.15rem;
+}
+
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+}
+
+.row {
+  display: flex;
+  gap: 4px;
+
+}
+
+.guess {
+  border: 2px solid transparent;
+  box-sizing: border-box;
+  transition: border-color 0s linear;
+
+  text-transform: uppercase;
+  color: white;
+  font-size: 2.25rem;
+  font-weight: bold;
+  width: 62px;
+  height: 62px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  transform-origin: center;
 }
 
-.App-link {
-  color: #61dafb;
+.guess.idle {
+  border-color: #3a3a3c;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.guess.highlighted {
+  border-color: #565758;
+  animation: bounce-in-place 0.075s 1 linear;
+}
+
+.guess.submitted {
+  animation: flip-card 0.4s 1 linear forwards;
+  transition: background-color 0s linear 0.2s;
+}
+
+.guess.submitted.incorrect {
+  background-color: #3a3a3c;
+}
+
+.guess.submitted.correct {
+  background-color: #538d4e;
+}
+
+.guess.submitted.almost-correct {
+  background-color: #b59f3b;
+}
+
+.guess.submitted.celebrate {
+  animation: flip-card 0.4s linear forwards, bounce-up 0.4s 1 ease-out;
+}
+
+@keyframes bounce-in-place {
+  50% {
+    transform: scale(1.07);
   }
-  to {
-    transform: rotate(360deg);
+  100% {
+    transform: scale(1.0);
+  }
+}
+
+@keyframes bounce-up {
+  50% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes flip-card {
+  0% {
+    border-color: #565758;
+  }
+  50% {
+    transform: scaleY(0);
+    border-color: #565758;
+  }
+  100% {
+    transform: scaleY(1);
+    border-color: transparent;
   }
 }
