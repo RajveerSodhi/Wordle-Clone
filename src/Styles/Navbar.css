@@ -1,0 +1,9 @@
+nav {
+    border-bottom: 1px solid #424242;
+    width: 100%;
+}
+
+.title {
+    text-transform: uppercase;
+    letter-spacing: 0.15rem;
+}

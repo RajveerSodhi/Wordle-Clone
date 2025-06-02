@@ -1,13 +1,22 @@
-import './App.css';
+import './Styles/App.css';
+import './Styles/VirtualKeyboard.css';
+import Navbar from './Components/Navbar';
+import Footer from './Components/Footer';
 import GuessBox from './Components/GuessBox';
-import VirtualKeyboard from './Components/VirtualKeyboard';
 import { useState, useEffect } from 'react';
+import { LuDelete } from "react-icons/lu";
 
 function App() {
-    // board constants
+    // constants
+    const keyRows = [
+        ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+        ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+        ["z", "x", "c", "v", "b", "n", "m"]
+    ];
     const MAX_GUESSES = 6
     const ANS_SIZE = 5
     const blankGuess = { char: "", state: "idle", celebrate: false, match: "incorrect" };
+    // const blankKey = { char: "", state: "idle", match: "incorrect" }
 
     // state variables
     let [isGameActive, setIsGameActive] = useState(true);
@@ -16,6 +25,7 @@ function App() {
     let [answer, setAnswer] = useState("REACH")
     let [currentGuess, setCurrentGuess] = useState([]);
     let [rows, setRows] = useState(Array.from({ length: MAX_GUESSES }, () => Array.from({ length: ANS_SIZE }, () => ({ ...blankGuess }))));
+    // let [keys, setKeys] = useState(Array.from({ length: 26 }, () => ({ ...blankKey })))
 
     function getComment() {
         if (didUserWin) {
@@ -34,6 +44,7 @@ function App() {
     }
 
     async function submitGuess() {
+        if (!isGameActive) return;
         if (currentGuess.length == ANS_SIZE) {
             for (let i = 0; i < currentGuess.length; i++) {
                 let guess = currentGuess[i].toUpperCase();
@@ -55,6 +66,29 @@ function App() {
                 });
 
                 await sleep(300);
+            }
+
+            for (let i = 0; i < currentGuess.length; i++) {
+                let guess = currentGuess[i].toUpperCase();
+                let virtualKey = document.getElementById(`key_${guess}`);
+
+                let match = "incorrect";
+                if (guess == answer[i]) {
+                    match = "correct";
+                } else if (answer.includes(guess)) {
+                    match = "almost-correct";
+                }
+
+                if (match == "correct") {
+                    virtualKey.classList.remove("almost-correct")
+                    virtualKey.classList.add("correct")
+                } else if (match == "almost-correct") {
+                    if (!virtualKey.classList.contains("correct")) {
+                        virtualKey.classList.add("almost-correct")
+                    }
+                } else {
+                    virtualKey.classList.add("incorrect")
+                }
             }
 
             setCurrentRowIndex(prev => prev + 1);
@@ -93,6 +127,7 @@ function App() {
     }
 
     function backspaceOnGuess() {
+        if (!isGameActive) return;
         if (currentGuess.length >= 1) {
             setRows(prev => {
                 prev[currentRowIndex][currentGuess.length - 1] = {
@@ -105,6 +140,7 @@ function App() {
     }
 
     function setCharInput(key) {
+        if (!isGameActive) return;
         setCurrentGuess(prev => [...prev, key]);
         setRows(prev => {
             prev[currentRowIndex][currentGuess.length] = {
@@ -113,6 +149,11 @@ function App() {
             };
             return prev;
         });
+    }
+
+    function onScreenCharInput(key) {
+        if (!isGameActive) return;
+        setCharInput(key);
     }
 
     function handleKeyDown(e) {
@@ -134,7 +175,8 @@ function App() {
 
     return (
         <div className="App">
-            <h1 className="title prevent-select">Wordle</h1>
+
+            <Navbar />
 
             {!isGameActive && <span className="comment prevent-select">{getComment()}</span>}
 
@@ -159,8 +201,30 @@ function App() {
                     }
                 </div>
 
-                <VirtualKeyboard />
+                <div className="keyboard">
+                    {
+                        keyRows.map((row, i) => {
+                            return (
+                                <div className="keyrow" key={i}>
+                                    {
+                                        row.map((letter, j) => {
+                                            return (
+                                                <>
+                                                    { (i == 2 && j == 0) && <button className="key spl-key enter" onClick={ submitGuess }>ENTER</button> }
+                                                    <button className="key" key={j} id={`key_${keyRows[i][j].toUpperCase()}`} onClick={ () => onScreenCharInput(keyRows[i][j]) }>{letter}</button>
+                                                    { (i == 2 && j == keyRows[2].length - 1) && <button className="key spl-key delete" onClick={ backspaceOnGuess }><LuDelete /></button> }
+                                                </>
+                                            );
+                                        })
+                                    }
+                                </div>
+                            );
+                        })
+                    }
+                </div>
             </main>
+
+            <Footer />
         </div>
     );
 }
