@@ -16,7 +16,7 @@ function App() {
     ];
     const MAX_GUESSES = 6;
     const ANS_SIZE = 5;
-    const blankGuess = { char: "", state: "idle", celebrate: false, match: "incorrect" };
+    const blankGuess = { char: "", state: "idle", celebrate: false, match: "incorrect", shake: false };
     // const blankKey = { char: "", state: "idle", match: "incorrect" };
 
     // state variables
@@ -50,16 +50,31 @@ function App() {
         }
     }
 
+    function patchCurrentRow(patchFn) {
+        setRows(prev => {
+            const next = prev.map((r, idx) => (idx === currentRowIndex ? [...r] : r));
+            next[currentRowIndex] = next[currentRowIndex].map(patchFn);
+            return next;
+        });
+    }
+
     async function submitGuess() {
         if (!isGameActive) return;
 
         if (currentGuess.length == ANS_SIZE) {
             if (!(await isValid())) {
-            setToastType("word-dne");
-            return;
-        }
+                setToastType("word-dne");
+                
+                patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
 
-            for (let i = 0; i < currentGuess.length; i++) {
+                await sleep(500);
+
+                patchCurrentRow(cell => ({ ...cell, shake: false }));
+
+                return;
+            }
+
+            for (let i = 0; i < ANS_SIZE; i++) {
                 let guess = currentGuess[i].toUpperCase();
                 let match = "incorrect";
                 if (guess == answer[i]) {
@@ -81,7 +96,7 @@ function App() {
                 await sleep(300);
             }
 
-            for (let i = 0; i < currentGuess.length; i++) {
+            for (let i = 0; i < ANS_SIZE; i++) {
                 let guess = currentGuess[i].toUpperCase();
                 let virtualKey = document.getElementById(`key_${guess}`);
 
@@ -191,7 +206,8 @@ function App() {
             const res = await fetch(url);
             if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
             const json = await res.json();
-            setAnswer(json[0]);
+            // setAnswer(json[0]);
+            setAnswer("REACH");
         } catch (err) {
             setFetchError(err.message);
         } finally {
@@ -239,6 +255,7 @@ function App() {
                                                     match={guess.match}
                                                     char={guess.char}
                                                     celebrate={guess.celebrate}
+                                                    shake={guess.shake}
                                                 />
                                     })
                                 }

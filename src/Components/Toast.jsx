@@ -8,7 +8,6 @@ function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration
         const exitTimer = setTimeout(() => setExiting(true), duration - exitMs);
 
         const killTimer = setTimeout(() => {
-            // setToastType(null)
             onClose();
         }, duration);
 
