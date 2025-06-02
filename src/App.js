@@ -110,6 +110,8 @@ function App() {
                 setIsGameActive(false);
                 setDidUserWin(true);
 
+                setToastType("user-won");
+
                 for (let i = 0; i < ANS_SIZE; i++) {
                     await sleep(150);
                     setRows(prev => {
@@ -127,6 +129,8 @@ function App() {
 
             if (currentRowIndex >= MAX_GUESSES - 1) {
                 setIsGameActive(false);
+
+                setToastType("user-lost");
             }
             
         }

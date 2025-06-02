@@ -1,7 +1,7 @@
 import '../Styles/Toast.css';
 import { useState, useEffect } from 'react';
 
-function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration = 2500, exitMs = 300}) {
+function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration = 2000, exitMs = 300}) {
     const [exiting, setExiting] = useState(false);
 
     useEffect(() => {
