@@ -22,9 +22,11 @@ function App() {
     let [isGameActive, setIsGameActive] = useState(true);
     let [didUserWin, setDidUserWin] = useState(false);
     let [currentRowIndex, setCurrentRowIndex] = useState(0);
-    let [answer, setAnswer] = useState("REACH")
+    let [answer, setAnswer] = useState("")
     let [currentGuess, setCurrentGuess] = useState([]);
     let [rows, setRows] = useState(Array.from({ length: MAX_GUESSES }, () => Array.from({ length: ANS_SIZE }, () => ({ ...blankGuess }))));
+    const [isLoading, setIsLoading] = useState(true);
+    const [fetchError, setFetchError] = useState(null);
     // let [keys, setKeys] = useState(Array.from({ length: 26 }, () => ({ ...blankKey })))
 
     function getComment() {
@@ -168,10 +170,31 @@ function App() {
     }
 
     useEffect(() => {
+        const fetchAnswer = async () => {
+        const url = `https://random-word-api.vercel.app/api?words=1&length=${ANS_SIZE}&type=uppercase`;
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+            const json = await res.json();
+            setAnswer(json[0]);
+        } catch (err) {
+            setFetchError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+        };
+
+        fetchAnswer();
+    }, []);
+
+    useEffect(() => {
         if (!isGameActive) return;
         document.addEventListener("keydown", handleKeyDown)
         return () => document.removeEventListener("keydown", handleKeyDown);
     }, [currentGuess, currentRowIndex, isGameActive])
+    
+    if (isLoading) return <p>Loading word...</p>;
+    if (fetchError) return <p>Error: {fetchError}</p>;
 
     return (
         <div className="App">
@@ -210,9 +233,9 @@ function App() {
                                         row.map((letter, j) => {
                                             return (
                                                 <>
-                                                    { (i == 2 && j == 0) && <button className="key spl-key enter" onClick={ submitGuess }>ENTER</button> }
-                                                    <button className="key" key={j} id={`key_${keyRows[i][j].toUpperCase()}`} onClick={ () => onScreenCharInput(keyRows[i][j]) }>{letter}</button>
-                                                    { (i == 2 && j == keyRows[2].length - 1) && <button className="key spl-key delete" onClick={ backspaceOnGuess }><LuDelete /></button> }
+                                                    { (i == 2 && j == 0) && <button className="key spl-key enter prevent-select" onClick={ submitGuess }>ENTER</button> }
+                                                    <button className="key prevent-select" key={j} id={`key_${keyRows[i][j].toUpperCase()}`} onClick={ () => onScreenCharInput(keyRows[i][j]) }>{letter}</button>
+                                                    { (i == 2 && j == keyRows[2].length - 1) && <button className="key spl-key delete prevent-select" onClick={ backspaceOnGuess }><LuDelete /></button> }
                                                 </>
                                             );
                                         })
