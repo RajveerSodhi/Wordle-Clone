@@ -3,6 +3,7 @@ import './Styles/VirtualKeyboard.css';
 import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
 import GuessBox from './Components/GuessBox';
+import Toast from './Components/Toast';
 import { useState, useEffect } from 'react';
 import { LuDelete } from "react-icons/lu";
 
@@ -13,10 +14,10 @@ function App() {
         ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
         ["z", "x", "c", "v", "b", "n", "m"]
     ];
-    const MAX_GUESSES = 6
-    const ANS_SIZE = 5
+    const MAX_GUESSES = 6;
+    const ANS_SIZE = 5;
     const blankGuess = { char: "", state: "idle", celebrate: false, match: "incorrect" };
-    // const blankKey = { char: "", state: "idle", match: "incorrect" }
+    // const blankKey = { char: "", state: "idle", match: "incorrect" };
 
     // state variables
     let [isGameActive, setIsGameActive] = useState(true);
@@ -27,27 +28,37 @@ function App() {
     let [rows, setRows] = useState(Array.from({ length: MAX_GUESSES }, () => Array.from({ length: ANS_SIZE }, () => ({ ...blankGuess }))));
     const [isLoading, setIsLoading] = useState(true);
     const [fetchError, setFetchError] = useState(null);
+    const [toastType, setToastType] = useState(null);
     // let [keys, setKeys] = useState(Array.from({ length: 26 }, () => ({ ...blankKey })))
 
-    function getComment() {
-        if (didUserWin) {
-            switch (currentRowIndex) {
-                case 1: return "Genius";
-                case 2: return "Magnificent";
-                case 3: return "Impressive";
-                case 4: return "Splendid";
-                case 5: return "Great";
-                case 6: return "Phew";
-                default: return "Splendid";
+    async function isValid() {
+        const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${currentGuess.join("")}`;
+        try {
+            const res = await fetch(url);
+
+            if (res.status === 404) {
+                return false;
             }
-        } else {
-            return answer.toUpperCase();
+            if (!res.ok) {
+                throw new Error(`Dictionary API error ${res.status}`);
+            }
+
+            return true;
+        } catch (err) {
+            setFetchError(err.message)
+            return false;
         }
     }
 
     async function submitGuess() {
         if (!isGameActive) return;
+
         if (currentGuess.length == ANS_SIZE) {
+            if (!(await isValid())) {
+            setToastType("word-dne");
+            return;
+        }
+
             for (let i = 0; i < currentGuess.length; i++) {
                 let guess = currentGuess[i].toUpperCase();
                 let match = "incorrect";
@@ -201,7 +212,15 @@ function App() {
 
             <Navbar />
 
-            {!isGameActive && <span className="comment prevent-select">{getComment()}</span>}
+            {toastType && (
+                <Toast
+                    type={toastType}
+                    answer={answer}
+                    currentRowIndex={currentRowIndex}
+
+                    onClose={() => setToastType(null)}
+                />
+            )}
 
             <main>
                 <div className="board">
@@ -232,11 +251,11 @@ function App() {
                                     {
                                         row.map((letter, j) => {
                                             return (
-                                                <>
+                                                <div className={((i == 2 && j == 0) || (i == 2 && j == keyRows[2].length - 1)) ? "keyrow" : ""} key={j}>
                                                     { (i == 2 && j == 0) && <button className="key spl-key enter prevent-select" onClick={ submitGuess }>ENTER</button> }
-                                                    <button className="key prevent-select" key={j} id={`key_${keyRows[i][j].toUpperCase()}`} onClick={ () => onScreenCharInput(keyRows[i][j]) }>{letter}</button>
+                                                    <button className="key prevent-select" id={`key_${keyRows[i][j].toUpperCase()}`} onClick={ () => onScreenCharInput(keyRows[i][j]) }>{letter}</button>
                                                     { (i == 2 && j == keyRows[2].length - 1) && <button className="key spl-key delete prevent-select" onClick={ backspaceOnGuess }><LuDelete /></button> }
-                                                </>
+                                                </div>
                                             );
                                         })
                                     }

@@ -1,0 +1,38 @@
+.toast {
+    position: absolute;
+    top: 6rem;
+    color: black;
+    border-radius: 8px;
+    background-color: white;
+    padding: 0.75rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+    animation: enter 0.3s ease-in-out forwards;
+}
+
+.toast--exit {
+    animation: exit .3s ease-in forwards;
+}
+
+
+@keyframes enter {
+    from {
+        opacity: 0;
+        transform: translateY(0.75rem);
+    }
+    to {
+        opacity: 100%;
+        transform: translateY(0);
+    }
+}
+
+@keyframes exit {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(0.75rem);
+    }
+}
