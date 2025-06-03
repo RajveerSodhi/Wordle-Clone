@@ -9,6 +9,7 @@ import Toast from './Components/Toast';
 import GameEndOverlay from './Components/GameEndOverlay';
 import RestartConfirmDialog from './Components/RestartConfirmDialog';
 import HelpDialog from './Components/HelpDialog';
+import SettingsDialog from './Components/SettingsDialog';
 
 function App() {
     // constants
@@ -36,6 +37,7 @@ function App() {
     let [showEndScreen, setShowEndScreen] = useState(false);
     let [showRestartConfirmDialog, setShowRestartConfirmDialog] = useState(false);
     let [showHelpDialog, setShowHelpDialog] = useState(true);
+    let [showSettingsDialog, setShowSettingsDialog] = useState(false);
     let [isAnimating, setIsAnimating] = useState(false); 
     // let [keys, setKeys] = useState(Array.from({ length: 26 }, () => ({ ...blankKey })))
 
@@ -282,6 +284,7 @@ function App() {
                 statsBtnFn={() => setShowEndScreen(true)}
                 restartBtnFn={() => setShowRestartConfirmDialog(true)}
                 helpBtnFn={() => setShowHelpDialog(true)}
+                settingsBtnFn={() => setShowSettingsDialog(true)}
                 isGameActive={isGameActive}
                 didUserWin={didUserWin}
                 disableRestart={isAnimating || (currentRowIndex == 0)}
@@ -357,6 +360,7 @@ function App() {
 
             { showRestartConfirmDialog && <RestartConfirmDialog onClose={() => setShowRestartConfirmDialog(false)} restartGame={restartGame} /> }
             { showHelpDialog && <HelpDialog onClose={() => setShowHelpDialog(false)} /> }
+            { showSettingsDialog && <SettingsDialog onClose={() => setShowSettingsDialog(false)} /> }
         </div>
     );
 }
