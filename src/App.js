@@ -8,6 +8,7 @@ import GuessBox from './Components/GuessBox';
 import Toast from './Components/Toast';
 import GameEndOverlay from './Components/GameEndOverlay';
 import RestartConfirmDialog from './Components/RestartConfirmDialog';
+import HelpDialog from './Components/HelpDialog';
 
 function App() {
     // constants
@@ -34,6 +35,7 @@ function App() {
     let [updateKeyboard, setUpdateKeyboard] = useState(false);
     let [showEndScreen, setShowEndScreen] = useState(false);
     let [showRestartConfirmDialog, setShowRestartConfirmDialog] = useState(false);
+    let [showHelpDialog, setHelpDialog] = useState(true);
     let [isAnimating, setIsAnimating] = useState(false); 
     // let [keys, setKeys] = useState(Array.from({ length: 26 }, () => ({ ...blankKey })))
 
@@ -279,6 +281,7 @@ function App() {
             <Navbar
                 statsBtnFn={() => setShowEndScreen(true)}
                 restartBtnFn={() => setShowRestartConfirmDialog(true)}
+                helpBtnFn={() => setHelpDialog(true)}
                 isGameActive={isGameActive}
                 didUserWin={didUserWin}
                 disableRestart={isAnimating || (currentRowIndex == 0)}
@@ -353,6 +356,7 @@ function App() {
             }
 
             { showRestartConfirmDialog && <RestartConfirmDialog onClose={() => setShowRestartConfirmDialog(false)} restartGame={restartGame} /> }
+            { showHelpDialog && <HelpDialog /> }
         </div>
     );
 }
