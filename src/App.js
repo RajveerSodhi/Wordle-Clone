@@ -27,11 +27,12 @@ function App() {
     let [answer, setAnswer] = useState("")
     let [currentGuess, setCurrentGuess] = useState([]);
     let [rows, setRows] = useState(Array.from({ length: MAX_GUESSES }, () => Array.from({ length: ANS_SIZE }, () => ({ ...blankGuess }))));
-    const [isLoading, setIsLoading] = useState(true);
-    const [fetchError, setFetchError] = useState(null);
-    const [toastType, setToastType] = useState(null);
-    const [updateKeyboard, setUpdateKeyboard] = useState(false);
-    const [showEndScreen, setShowEndScreen] = useState(false);
+    let [isLoading, setIsLoading] = useState(true);
+    let [fetchError, setFetchError] = useState(null);
+    let [toastType, setToastType] = useState(null);
+    let [updateKeyboard, setUpdateKeyboard] = useState(false);
+    let [showEndScreen, setShowEndScreen] = useState(false);
+    let [isAnimating, setIsAnimating] = useState(false); 
     // let [keys, setKeys] = useState(Array.from({ length: 26 }, () => ({ ...blankKey })))
 
     let enteredWords = useRef(new Map());
@@ -64,85 +65,112 @@ function App() {
     }
 
     async function submitGuess() {
-        if (!isGameActive) return;
-        if (currentGuess.length == ANS_SIZE) {
-            let isWordValid = enteredWords.current.get(currentGuess.join(""));
-            if (isWordValid === undefined) {
-                isWordValid = await isValid();
-                enteredWords.current.set(currentGuess.join(""), isWordValid);
+        if (!isGameActive || currentGuess.length != ANS_SIZE) return;
+
+        setIsAnimating(true);
+
+        let isWordValid = enteredWords.current.get(currentGuess.join(""));
+        if (isWordValid === undefined) {
+            isWordValid = await isValid();
+            enteredWords.current.set(currentGuess.join(""), isWordValid);
+        }
+
+        if (!isWordValid) {
+            setToastType("word-dne");
+            
+            patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
+
+            await sleep(500);
+
+            patchCurrentRow(cell => ({ ...cell, shake: false }));
+
+            setIsAnimating(false);
+
+            return;
+        }
+
+        for (let i = 0; i < ANS_SIZE; i++) {
+            let guess = currentGuess[i].toUpperCase();
+            let match = "incorrect";
+            if (guess == answer[i]) {
+                match = "correct";
+            } else if (answer.includes(guess)) {
+                match = "almost-correct";
             }
 
-            if (!isWordValid) {
-                setToastType("word-dne");
-                
-                patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
+            setRows(prev => {
+                const newRows = prev.map(row => [...row]);
+                newRows[currentRowIndex][i] = {
+                    char: currentGuess[i],
+                    state: "submitted",
+                    match: match
+                };
+                return newRows;
+            });
 
-                await sleep(500);
+            await sleep(300);
+        }
 
-                patchCurrentRow(cell => ({ ...cell, shake: false }));
+        setUpdateKeyboard(true);
 
-                return;
-            }
+        setIsAnimating(false);
+
+        setCurrentRowIndex(prev => prev + 1);
+
+        if (currentGuess.join("").toUpperCase() == answer.toUpperCase()) {
+            setIsGameActive(false);
+            setDidUserWin(true);
+
+            setToastType("user-won");
 
             for (let i = 0; i < ANS_SIZE; i++) {
-                let guess = currentGuess[i].toUpperCase();
-                let match = "incorrect";
-                if (guess == answer[i]) {
-                    match = "correct";
-                } else if (answer.includes(guess)) {
-                    match = "almost-correct";
-                }
-
+                await sleep(150);
                 setRows(prev => {
-                    const newRows = prev.map(row => [...row]);
-                    newRows[currentRowIndex][i] = {
-                        char: currentGuess[i],
-                        state: "submitted",
-                        match: match
+                    const next = prev.map(row => row.map(cell => ({ ...cell })));
+                    next[currentRowIndex][i] = {
+                    ...next[currentRowIndex][i],
+                    celebrate: true
                     };
-                    return newRows;
+                    return next;
                 });
-
-                await sleep(300);
             }
 
-            setUpdateKeyboard(true);
+            await sleep(1000);
 
-            setCurrentRowIndex(prev => prev + 1);
+            setShowEndScreen(true);
 
-            if (currentGuess.join("").toUpperCase() == answer.toUpperCase()) {
-                setIsGameActive(false);
-                setDidUserWin(true);
+            setIsAnimating(false);
+        } else if (currentRowIndex >= MAX_GUESSES - 1) {
+            setIsGameActive(false);
 
-                setToastType("user-won");
+            setToastType("user-lost");
 
-                for (let i = 0; i < ANS_SIZE; i++) {
-                    await sleep(150);
-                    setRows(prev => {
-                        const next = prev.map(row => row.map(cell => ({ ...cell })));
-                        next[currentRowIndex][i] = {
-                        ...next[currentRowIndex][i],
-                        celebrate: true
-                        };
-                        return next;
-                    });
-                }
-
-                await sleep(1000);
-
-                setShowEndScreen(true);
-            } else if (currentRowIndex >= MAX_GUESSES - 1) {
-                setIsGameActive(false);
-
-                setToastType("user-lost");
-            }
-
-            setCurrentGuess([]);
+            setIsAnimating(false);
         }
+
+        setCurrentGuess([]);
     }
 
     const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+    function restartGame() {
+        setUpdateKeyboard(false);
+        setToastType(null);
+        setRows(Array.from({ length: MAX_GUESSES }, () => Array.from({ length: ANS_SIZE }, () => ({ ...blankGuess }))));
+        fetchAnswer();
+        setCurrentGuess([]);
+        setCurrentRowIndex(0);
+        setDidUserWin(false);
+        setIsGameActive(true);
+        
+        const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (let i in alphabets) {
+            const virtualKey = document.getElementById(`key_${alphabets[i]}`);
+            if (!virtualKey) continue;
+            virtualKey.className = "key prevent-select";
+        }
+    }
+    
     function isChar(key) {
         let code = key.toUpperCase().charCodeAt(0)
         return code >= 65 && code <= 90 && key.length == 1
@@ -216,8 +244,7 @@ function App() {
         setUpdateKeyboard(false);
     }, [updateKeyboard]);
 
-    useEffect(() => {
-        const fetchAnswer = async () => {
+    const fetchAnswer = async () => {
         const url = `https://random-word-api.vercel.app/api?words=1&length=${ANS_SIZE}&type=uppercase`;
         try {
             const res = await fetch(url);
@@ -230,8 +257,9 @@ function App() {
         } finally {
             setIsLoading(false);
         }
-        };
+    };
 
+    useEffect(() => {
         fetchAnswer();
     }, []);
 
@@ -249,8 +277,10 @@ function App() {
 
             <Navbar
                 statsBtnFn={() => setShowEndScreen(true)}
+                restartBtnFn={restartGame}
                 isGameActive={isGameActive}
                 didUserWin={didUserWin}
+                disableRestart={isAnimating}
             />
 
             {toastType && (

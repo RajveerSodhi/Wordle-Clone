@@ -25,7 +25,6 @@ nav {
     cursor: pointer;
     width: 32px;
     height: 32px;
-    /* border: 1px solid white; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -46,4 +45,9 @@ nav {
 
 .restart-btn {
     font-size: 26px;
+}
+
+.nav-btn:disabled {
+    opacity: 0.5;
+    pointer-events: none;
 }
