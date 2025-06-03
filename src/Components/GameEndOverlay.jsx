@@ -4,7 +4,7 @@ import { ImCross } from "react-icons/im";
 import { MdOutlineStarPurple500 } from "react-icons/md";
 import { useState } from 'react';
 
-function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, restartGame}) {
+function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, restartGameFn}) {
     const [showCopiedToast, setShowCopiedToast] = useState(false);
 
     function getSharableResult(rows) {
@@ -12,7 +12,7 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, res
         let ans_length = rows[0].length;
         let result = "";
 
-        result += `Wordle '${answer.toUpperCase()}' ${currentRowIndex}/${max_tries}\n`;
+        result += `Wordle '${answer.toUpperCase()}' ${didUserWin ? currentRowIndex : "X"}/${max_tries}\n\n`;
 
         for (let i = 0; i < max_tries; i++) {
             for (let j = 0; j < ans_length; j++) {
@@ -59,7 +59,7 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, res
                         Share <IoShareSocialOutline className="btn-icon" />
                     </button>
 
-                    <button className="main-btn" onClick={() => restartGame()}>
+                    <button className="main-btn" onClick={() => restartGameFn()}>
                         Play Again <IoPlayOutline className="btn-icon" />
                     </button>
                 </div>

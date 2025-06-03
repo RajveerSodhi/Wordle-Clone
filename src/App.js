@@ -7,6 +7,7 @@ import Footer from './Components/Footer';
 import GuessBox from './Components/GuessBox';
 import Toast from './Components/Toast';
 import GameEndOverlay from './Components/GameEndOverlay';
+import RestartConfirmDialog from './Components/RestartConfirmDialog';
 
 function App() {
     // constants
@@ -32,6 +33,7 @@ function App() {
     let [toastType, setToastType] = useState(null);
     let [updateKeyboard, setUpdateKeyboard] = useState(false);
     let [showEndScreen, setShowEndScreen] = useState(false);
+    let [showRestartConfirmDialog, setShowRestartConfirmDialog] = useState(false);
     let [isAnimating, setIsAnimating] = useState(false); 
     // let [keys, setKeys] = useState(Array.from({ length: 26 }, () => ({ ...blankKey })))
 
@@ -112,9 +114,7 @@ function App() {
         }
 
         setUpdateKeyboard(true);
-
         setIsAnimating(false);
-
         setCurrentRowIndex(prev => prev + 1);
 
         if (currentGuess.join("").toUpperCase() == answer.toUpperCase()) {
@@ -136,16 +136,14 @@ function App() {
             }
 
             await sleep(1000);
-
             setShowEndScreen(true);
-
             setIsAnimating(false);
         } else if (currentRowIndex >= MAX_GUESSES - 1) {
             setIsGameActive(false);
-
             setToastType("user-lost");
-
             setIsAnimating(false);
+            await sleep(1650);
+            setShowEndScreen(true);
         }
 
         setCurrentGuess([]);
@@ -169,6 +167,9 @@ function App() {
             if (!virtualKey) continue;
             virtualKey.className = "key prevent-select";
         }
+
+        setShowRestartConfirmDialog(false);
+        setShowEndScreen(false);
     }
     
     function isChar(key) {
@@ -277,10 +278,10 @@ function App() {
 
             <Navbar
                 statsBtnFn={() => setShowEndScreen(true)}
-                restartBtnFn={restartGame}
+                restartBtnFn={() => setShowRestartConfirmDialog(true)}
                 isGameActive={isGameActive}
                 didUserWin={didUserWin}
-                disableRestart={isAnimating}
+                disableRestart={isAnimating || (currentRowIndex == 0)}
             />
 
             {toastType && (
@@ -325,7 +326,7 @@ function App() {
                                             return (
                                                 <div className={((i == 2 && j == 0) || (i == 2 && j == keyRows[2].length - 1)) ? "keyrow" : ""} key={j}>
                                                     { (i == 2 && j == 0) && <button className="key spl-key enter prevent-select" onClick={ submitGuess }>ENTER</button> }
-                                                    <button className="key prevent-select" id={`key_${keyRows[i][j].toUpperCase()}`} onClick={ () => onScreenCharInput(keyRows[i][j]) }>{letter}</button>
+                                                    <button className="key prevent-select" tabIndex="-1" id={`key_${keyRows[i][j].toUpperCase()}`} onMouseDown={(e) => e.preventDefault()} onClick={ () => onScreenCharInput(keyRows[i][j]) }>{letter}</button>
                                                     { (i == 2 && j == keyRows[2].length - 1) && <button className="key spl-key delete prevent-select" onClick={ backspaceOnGuess }><LuDelete /></button> }
                                                 </div>
                                             );
@@ -347,8 +348,11 @@ function App() {
                     onClose={() => setShowEndScreen(false)}
                     currentRowIndex={currentRowIndex}
                     answer={answer}
+                    restartGameFn={restartGame}
                 />
             }
+
+            { showRestartConfirmDialog && <RestartConfirmDialog onClose={() => setShowRestartConfirmDialog(false)} restartGame={restartGame} /> }
         </div>
     );
 }
