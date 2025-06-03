@@ -4,9 +4,9 @@ function Footer() {
     return (
         <footer>
             <ul>
-                <li>© 2025 Rajveer Sodhi</li>
+                <li>Wordle Clone by <a href="https://www.rajveersodhi.com" target = "_blank" rel="noreferrer">Rajveer Sodhi</a></li>
                 <li>|</li>
-                <li><a href="https://www.rajveersodhi.com" target = "_blank" rel="noreferrer">Visit My Website</a></li>
+                <li>Dedicated to my Dad</li>
                 <li>|</li>
                 <li><a href="https://www.nytimes.com/games/wordle/index.html" target = "_blank" rel="noreferrer">Visit Wordle</a></li>
             </ul>

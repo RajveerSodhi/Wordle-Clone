@@ -10,6 +10,7 @@ import GameEndOverlay from './Components/GameEndOverlay';
 import RestartConfirmDialog from './Components/RestartConfirmDialog';
 import HelpDialog from './Components/HelpDialog';
 import SettingsDialog from './Components/SettingsDialog';
+import CreateDialog from './Components/CreateDialog';
 
 function App() {
     // constants
@@ -38,6 +39,7 @@ function App() {
     let [showRestartConfirmDialog, setShowRestartConfirmDialog] = useState(false);
     let [showHelpDialog, setShowHelpDialog] = useState(true);
     let [showSettingsDialog, setShowSettingsDialog] = useState(false);
+    let [showCreateDialog, setShowCreateDialog] = useState(false);
     let [isAnimating, setIsAnimating] = useState(false); 
     // let [keys, setKeys] = useState(Array.from({ length: 26 }, () => ({ ...blankKey })))
 
@@ -255,8 +257,8 @@ function App() {
             const res = await fetch(url);
             if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
             const json = await res.json();
-            // setAnswer(json[0]);
-            setAnswer("REACH");
+            setAnswer(json[0]);
+            // setAnswer("REACH");
         } catch (err) {
             setFetchError(err.message);
         } finally {
@@ -285,6 +287,7 @@ function App() {
                 restartBtnFn={() => setShowRestartConfirmDialog(true)}
                 helpBtnFn={() => setShowHelpDialog(true)}
                 settingsBtnFn={() => setShowSettingsDialog(true)}
+                createBtnFn={() => setShowCreateDialog(true)}
                 isGameActive={isGameActive}
                 didUserWin={didUserWin}
                 disableRestart={isAnimating || (currentRowIndex == 0)}
@@ -361,6 +364,7 @@ function App() {
             { showRestartConfirmDialog && <RestartConfirmDialog onClose={() => setShowRestartConfirmDialog(false)} restartGame={restartGame} /> }
             { showHelpDialog && <HelpDialog onClose={() => setShowHelpDialog(false)} /> }
             { showSettingsDialog && <SettingsDialog onClose={() => setShowSettingsDialog(false)} /> }
+            { showCreateDialog && <CreateDialog onClose={() => setShowCreateDialog(false)} /> }
         </div>
     );
 }
