@@ -1,11 +1,12 @@
 import './Styles/App.css';
 import './Styles/VirtualKeyboard.css';
+import { useState, useEffect, useRef } from 'react';
+import { LuDelete } from "react-icons/lu";
 import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
 import GuessBox from './Components/GuessBox';
 import Toast from './Components/Toast';
-import { useState, useEffect } from 'react';
-import { LuDelete } from "react-icons/lu";
+import GameEndOverlay from './Components/GameEndOverlay';
 
 function App() {
     // constants
@@ -29,7 +30,11 @@ function App() {
     const [isLoading, setIsLoading] = useState(true);
     const [fetchError, setFetchError] = useState(null);
     const [toastType, setToastType] = useState(null);
+    const [updateKeyboard, setUpdateKeyboard] = useState(false);
+    const [showEndScreen, setShowEndScreen] = useState(false);
     // let [keys, setKeys] = useState(Array.from({ length: 26 }, () => ({ ...blankKey })))
+
+    let enteredWords = useRef(new Map());
 
     async function isValid() {
         const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${currentGuess.join("")}`;
@@ -60,9 +65,14 @@ function App() {
 
     async function submitGuess() {
         if (!isGameActive) return;
-
         if (currentGuess.length == ANS_SIZE) {
-            if (!(await isValid())) {
+            let isWordValid = enteredWords.current.get(currentGuess.join(""));
+            if (isWordValid === undefined) {
+                isWordValid = await isValid();
+                enteredWords.current.set(currentGuess.join(""), isWordValid);
+            }
+
+            if (!isWordValid) {
                 setToastType("word-dne");
                 
                 patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
@@ -96,28 +106,7 @@ function App() {
                 await sleep(300);
             }
 
-            for (let i = 0; i < ANS_SIZE; i++) {
-                let guess = currentGuess[i].toUpperCase();
-                let virtualKey = document.getElementById(`key_${guess}`);
-
-                let match = "incorrect";
-                if (guess == answer[i]) {
-                    match = "correct";
-                } else if (answer.includes(guess)) {
-                    match = "almost-correct";
-                }
-
-                if (match == "correct") {
-                    virtualKey.classList.remove("almost-correct")
-                    virtualKey.classList.add("correct")
-                } else if (match == "almost-correct") {
-                    if (!virtualKey.classList.contains("correct")) {
-                        virtualKey.classList.add("almost-correct")
-                    }
-                } else {
-                    virtualKey.classList.add("incorrect")
-                }
-            }
+            setUpdateKeyboard(true);
 
             setCurrentRowIndex(prev => prev + 1);
 
@@ -138,16 +127,17 @@ function App() {
                         return next;
                     });
                 }
-            }
 
-            setCurrentGuess([]);
+                await sleep(1000);
 
-            if (currentRowIndex >= MAX_GUESSES - 1) {
+                setShowEndScreen(true);
+            } else if (currentRowIndex >= MAX_GUESSES - 1) {
                 setIsGameActive(false);
 
                 setToastType("user-lost");
             }
-            
+
+            setCurrentGuess([]);
         }
     }
 
@@ -189,6 +179,8 @@ function App() {
     }
 
     function handleKeyDown(e) {
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+
         let key = e.key
         if (isChar(key) && currentGuess.length < ANS_SIZE) {
                 setCharInput(key);
@@ -198,6 +190,31 @@ function App() {
             backspaceOnGuess();
         }
     }
+
+    useEffect(() => {
+        if (!updateKeyboard) return;
+
+        for (let i = 0; i < ANS_SIZE; i++) {
+            const guess = rows[currentRowIndex - 1][i];
+            const guess_char = guess.char.toUpperCase();
+            const guess_match = guess.match;
+            const virtualKey = document.getElementById(`key_${guess_char}`);
+            if (!virtualKey) continue;
+
+            if (guess_match === "correct") {
+                virtualKey.classList.remove("almost-correct");
+                virtualKey.classList.add("correct");
+            } else if (guess_match === "almost-correct") {
+                if (!virtualKey.classList.contains("correct")) {
+                    virtualKey.classList.add("almost-correct");
+                }
+            } else {
+                virtualKey.classList.add("incorrect");
+            }
+        }
+
+        setUpdateKeyboard(false);
+    }, [updateKeyboard]);
 
     useEffect(() => {
         const fetchAnswer = async () => {
@@ -223,14 +240,18 @@ function App() {
         document.addEventListener("keydown", handleKeyDown)
         return () => document.removeEventListener("keydown", handleKeyDown);
     }, [currentGuess, currentRowIndex, isGameActive])
-    
+
     if (isLoading) return <p>Loading word...</p>;
     if (fetchError) return <p>Error: {fetchError}</p>;
 
     return (
         <div className="App">
 
-            <Navbar />
+            <Navbar
+                statsBtnFn={() => setShowEndScreen(true)}
+                isGameActive={isGameActive}
+                didUserWin={didUserWin}
+            />
 
             {toastType && (
                 <Toast
@@ -288,6 +309,16 @@ function App() {
             </main>
 
             <Footer />
+
+            {
+                showEndScreen && <GameEndOverlay
+                    rows={rows}
+                    didUserWin={didUserWin}
+                    onClose={() => setShowEndScreen(false)}
+                    currentRowIndex={currentRowIndex}
+                    answer={answer}
+                />
+            }
         </div>
     );
 }

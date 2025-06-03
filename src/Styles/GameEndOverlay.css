@@ -1,0 +1,148 @@
+.background {
+    background-color: rgba(18, 18, 19);
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fade-in 0.2s 1 linear;
+}
+
+.background section {
+    animation: fade-up 0.35s 1 ease-out forwards;
+    animation-delay: 0.15s;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+
+    gap: 8rem;
+    width: 75%;
+}
+
+.main-btn {
+    color: white;
+    border: none;
+    background-color: #58a351;
+    width: 200px;
+    height: 44px;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-icon {
+    margin-left: 10px;
+    font-size: 19px;
+    color: white;
+}
+
+.star-icon {
+    color: white;
+    font-size: 42px;
+}
+
+.star-inner-bg {
+    height: 52px;
+    width: 52px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0px;
+    background-color: #397e32;
+}
+
+.star-outer-bg {
+    height: 72px;
+    width: 72px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    background-color: #9aba96;
+}
+
+.card-title h1 {
+    font-size: 2.25rem;
+    margin: 0;
+}
+
+.back-btn-container {
+    display: flex;
+    align-items: end;
+    justify-content: end;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.back-btn-icon {
+    margin-left: 10px;
+}
+
+.main-btn-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.card-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.copy-toast {
+    color: black;
+    border-radius: 8px;
+    background-color: white;
+    padding: 0.75rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+    width: 220px;
+    margin: 0 auto;
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fade-up {
+	from {
+		opacity: 0;
+        transform: translateY(2rem);
+	}
+	to {
+		opacity: 1;
+        transform: translateY(0);
+	}
+}

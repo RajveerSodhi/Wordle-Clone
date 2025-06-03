@@ -1,9 +1,49 @@
 nav {
     border-bottom: 1px solid #424242;
+    padding: 1rem 2rem;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    box-sizing: border-box;
 }
 
 .title {
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     text-transform: uppercase;
     letter-spacing: 0.15rem;
+}
+
+.nav-btn {
+    font-size: 30px;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    /* border: 1px solid white; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.nav-elements {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.stats-btn {
+    transform: rotateY(180deg);
+}
+
+.restart-btn {
+    font-size: 26px;
 }
