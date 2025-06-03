@@ -6,7 +6,7 @@ function RestartConfirmDialog({restartGame, onClose}) {
         <>
             <BackgroundOverlay />
 
-            <div className="dialog centered">
+            <div className="dialog centered centered-content">
                 <div>
                     <h2>Are you sure?</h2>
                     <span className="description">You will be given a new word to guess.</span>

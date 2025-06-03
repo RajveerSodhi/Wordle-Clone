@@ -13,18 +13,17 @@ import SettingsDialog from './Components/SettingsDialog';
 import CreateDialog from './Components/CreateDialog';
 
 function App() {
-    // constants
     const keyRows = [
         ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
         ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
         ["z", "x", "c", "v", "b", "n", "m"]
     ];
-    const MAX_GUESSES = 6;
-    const ANS_SIZE = 5;
     const blankGuess = { char: "", state: "idle", celebrate: false, match: "incorrect", shake: false };
     // const blankKey = { char: "", state: "idle", match: "incorrect" };
 
     // state variables
+    let [MAX_GUESSES, setMaxGuesses] = useState(6);
+    let [ANS_SIZE, setAnsSize] = useState(5);
     let [isGameActive, setIsGameActive] = useState(true);
     let [didUserWin, setDidUserWin] = useState(false);
     let [currentRowIndex, setCurrentRowIndex] = useState(0);
@@ -34,6 +33,10 @@ function App() {
     let [isLoading, setIsLoading] = useState(true);
     let [fetchError, setFetchError] = useState(null);
     let [toastType, setToastType] = useState(null);
+    let [isHighContrastMode, setIsHighContrastMode] = useState(false);
+    let [isKeyboardDisabled, setIsKeyboardDisabled] = useState(false);
+    let [isHardMode, setIsHardMode] = useState(false);
+    let [guessedLetters, setGuessedLetters] = useState([]);
     let [updateKeyboard, setUpdateKeyboard] = useState(false);
     let [showEndScreen, setShowEndScreen] = useState(false);
     let [showRestartConfirmDialog, setShowRestartConfirmDialog] = useState(false);
@@ -85,16 +88,27 @@ function App() {
 
         if (!isWordValid) {
             setToastType("word-dne");
-            
             patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
-
             await sleep(500);
-
             patchCurrentRow(cell => ({ ...cell, shake: false }));
-
             setIsAnimating(false);
 
             return;
+        }
+
+        if (isHardMode) {
+            for (let i of guessedLetters) {
+                if (!currentGuess.includes(i)) {
+                    setToastType(`hardMode_${i}`);
+
+                    patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
+                    await sleep(500);
+                    patchCurrentRow(cell => ({ ...cell, shake: false }));
+                    setIsAnimating(false);
+
+                    return;
+                }
+            }
         }
 
         for (let i = 0; i < ANS_SIZE; i++) {
@@ -102,8 +116,14 @@ function App() {
             let match = "incorrect";
             if (guess == answer[i]) {
                 match = "correct";
+                if (!guessedLetters.includes(guess)) {
+                    setGuessedLetters(prev => [...prev, guess]);
+                }  
             } else if (answer.includes(guess)) {
                 match = "almost-correct";
+                if (!guessedLetters.includes(guess)) {
+                    setGuessedLetters(prev => [...prev, guess]);
+                }                
             }
 
             setRows(prev => {
@@ -157,6 +177,34 @@ function App() {
 
     const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+    function setAnsSizeFromSettings(size) {
+        if (currentRowIndex != 0) {
+            setToastType("unavailablePast0");
+            return;
+        }
+
+        setAnsSize(size);
+        console.log(size);
+    }
+
+    function setMaxGuessesFromSettings(guesses) {
+        if (currentRowIndex != 0) {
+            setToastType("unavailablePast0");
+            return;
+        }
+
+        setMaxGuesses(guesses);
+    }
+
+    function setIsHardModeFromSettings(setting) {
+        if (currentRowIndex != 0) {
+            setToastType("unavailablePast0");
+            return;
+        }
+
+        setIsHardMode(setting);
+    }
+
     function restartGame() {
         setUpdateKeyboard(false);
         setToastType(null);
@@ -166,6 +214,7 @@ function App() {
         setCurrentRowIndex(0);
         setDidUserWin(false);
         setIsGameActive(true);
+        setGuessedLetters([]);
         
         const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         for (let i in alphabets) {
@@ -198,7 +247,7 @@ function App() {
 
     function setCharInput(key) {
         if (!isGameActive) return;
-        setCurrentGuess(prev => [...prev, key]);
+        setCurrentGuess(prev => [...prev, key.toUpperCase()]);
         setRows(prev => {
             prev[currentRowIndex][currentGuess.length] = {
                 char: key.toUpperCase(),
@@ -225,6 +274,19 @@ function App() {
             backspaceOnGuess();
         }
     }
+
+    useEffect(() => {
+        setRows(Array.from({ length: MAX_GUESSES }, () =>
+            Array.from({ length: ANS_SIZE }, () => ({ ...blankGuess }))
+        ));
+        fetchAnswer();
+        setCurrentGuess([]);
+        setCurrentRowIndex(0);
+        setGuessedLetters([]);
+        setDidUserWin(false);
+        setIsGameActive(true);
+        enteredWords.current.clear();
+    }, [ANS_SIZE, MAX_GUESSES]);
 
     useEffect(() => {
         if (!updateKeyboard) return;
@@ -257,8 +319,8 @@ function App() {
             const res = await fetch(url);
             if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
             const json = await res.json();
-            setAnswer(json[0]);
-            // setAnswer("REACH");
+            // setAnswer(json[0]);
+            setAnswer("REACH");
         } catch (err) {
             setFetchError(err.message);
         } finally {
@@ -271,10 +333,10 @@ function App() {
     }, []);
 
     useEffect(() => {
-        if (!isGameActive) return;
+        if (!isGameActive || isKeyboardDisabled) return;
         document.addEventListener("keydown", handleKeyDown)
         return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [currentGuess, currentRowIndex, isGameActive])
+    }, [currentGuess, currentRowIndex, isGameActive,  isKeyboardDisabled])
 
     if (isLoading) return <p>Loading word...</p>;
     if (fetchError) return <p>Error: {fetchError}</p>;
@@ -363,7 +425,7 @@ function App() {
 
             { showRestartConfirmDialog && <RestartConfirmDialog onClose={() => setShowRestartConfirmDialog(false)} restartGame={restartGame} /> }
             { showHelpDialog && <HelpDialog onClose={() => setShowHelpDialog(false)} /> }
-            { showSettingsDialog && <SettingsDialog onClose={() => setShowSettingsDialog(false)} /> }
+            { showSettingsDialog && <SettingsDialog onClose={() => setShowSettingsDialog(false)} max_guesses={MAX_GUESSES} ans_size={ANS_SIZE} setAnsSize={setAnsSizeFromSettings} setMaxGuesses={setMaxGuessesFromSettings} isHardMode={isHardMode} setIsHardMode={setIsHardModeFromSettings} isKeyboardDisabled={isKeyboardDisabled} setIsKeyboardDisabled={setIsKeyboardDisabled} /> }
             { showCreateDialog && <CreateDialog onClose={() => setShowCreateDialog(false)} /> }
         </div>
     );

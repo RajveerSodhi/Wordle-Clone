@@ -8,6 +8,7 @@
     font-weight: bold;
     font-size: 0.9rem;
     animation: enter 0.3s ease-in-out forwards;
+    z-index: 1;
 }
 
 .toast--exit {

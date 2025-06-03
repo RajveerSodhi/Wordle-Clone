@@ -2,7 +2,7 @@ import '../Styles/SettingsDialog.css';
 import { ImCross } from "react-icons/im";
 import BackgroundOverlay from './BackgroundOverlay';
 
-function SettingsDialog({ onClose }) {
+function SettingsDialog({ onClose, max_guesses, ans_size, setAnsSize, setMaxGuesses, isHardMode, setIsHardMode, isKeyboardDisabled, setIsKeyboardDisabled }) {
     return (
         <>
             <BackgroundOverlay />
@@ -12,61 +12,89 @@ function SettingsDialog({ onClose }) {
                     <button className="back-btn" onClick={() => {onClose()}}><ImCross className="back-btn-icon" /></button>
                 </div>
 
-                <section>
-                    <div>
+                <h5 className="settings-title">Settings</h5>
+
+                <section className="setting">
+                    <div className="setting-name-desc-container">
                         <p className="setting-name">Hard Mode</p>
                         <p className="setting-desc">Any revealed hints must be used in subsequent guesses</p>
                     </div>
-                    <input/>
+                    <label className="switch">
+                        <input type="checkbox" checked={isHardMode} onChange={(e) => setIsHardMode(e.target.checked)}/>
+                        <span className="slider round"></span>
+                    </label>
                 </section>
 
                 <hr/>
 
-                <section>
-                    <div>
+                <section className="setting">
+                    <div className="setting-name-desc-container">
                         <p className="setting-name">Word Length</p>
                         <p className="setting-desc">Change the number of letters to be guessed</p>
                     </div>
-                    <input/>
+                    <select name="ans_length" id="ans_length" className="select" value={ans_size.toString()} onChange={(e) => setAnsSize(parseInt(e.target.value))}>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                    </select>
                 </section>
 
                 <hr/>
 
-                <section>
-                    <div>
+                <section className="setting">
+                    <div className="setting-name-desc-container">
                         <p className="setting-name">Guesses</p>
-                        <p className="setting-desc">Change the amount of guesses you get</p>
+                        <p className="setting-desc">Change the amount of tries you get to guess the answer</p>
                     </div>
-                    <input/>
+                    <select name="max_tries" id="max_tries" className="select" value={max_guesses.toString()} onChange={(e) => setMaxGuesses(parseInt(e.target.value))}>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                    </select>
                 </section>
 
-                <hr/>
+                <hr className="divider"/>
 
-                <section>
-                    <div>
+                {/* <section className="setting">
+                    <div className="setting-name-desc-container">
                         <p className="setting-name">Dark Theme</p>
                     </div>
-                    <input/>
+                    <label className="switch">
+                        <input type="checkbox"/>
+                        <span className="slider round"></span>
+                    </label>
                 </section>
 
-                <hr/>
+                <hr/> */}
 
-                <section>
-                    <div>
+                {/* <section className="setting">
+                    <div className="setting-name-desc-container">
                         <p className="setting-name">High Contrast Mode</p>
                         <p className="setting-desc">Contrast and colorblindness improvements</p>
                     </div>
-                    <input/>
+                    <label className="switch">
+                        <input type="checkbox"/>
+                        <span className="slider round"></span>
+                    </label>
                 </section>
 
-                <hr/>
+                <hr/> */}
 
-                <section>
-                    <div>
+                <section className="setting">
+                    <div className="setting-name-desc-container">
                         <p className="setting-name">Onscreen Keyboard Input Only</p>
                         <p className="setting-desc">Ignore key input except from the onscreen keyboard. Most helpful for users using speech recognition or other assistive devices.</p>
                     </div>
-                    <input/>
+                    <label className="switch">
+                        <input type="checkbox" checked={isKeyboardDisabled} onChange={(e) => setIsKeyboardDisabled(e.target.checked)}/>
+                        <span className="slider round"></span>
+                    </label>
                 </section>
             </div>
         </>

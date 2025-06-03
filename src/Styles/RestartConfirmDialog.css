@@ -9,6 +9,11 @@
     animation: fade-up 0.35s 1 ease-out forwards;
 }
 
+.centered-content {
+    justify-content: center !important;
+    align-items: center !important;
+}
+
 .description {
     font-size: 18px;
 }

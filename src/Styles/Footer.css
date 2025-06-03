@@ -8,6 +8,10 @@ footer ul {
     gap: 10px;
 }
 
+footer {
+    /* margin-top: 2rem; */
+}
+
 a {
     color: white;
     display: inline-block;

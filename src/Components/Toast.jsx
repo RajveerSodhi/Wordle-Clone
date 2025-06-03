@@ -32,6 +32,11 @@ function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration
             }
         } else if (type == "user-lost") {
             return answer.toUpperCase();
+        } else if (type == "unavailablePast0") {
+            return "Only available at the start of a game";
+        } else if (type.includes("hardMode")) {
+            let missingLetter = type.split("_")[1].toUpperCase();
+            return `Guess must contain ${missingLetter}`;
         }
     }
 
