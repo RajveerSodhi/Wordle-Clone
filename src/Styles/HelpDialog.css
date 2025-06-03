@@ -1,0 +1,133 @@
+.dialog {
+    align-items: start;
+    width: 80%;
+    max-width: 520px;
+}
+
+h2 {
+    font-size: 28px;
+    font-family: "NYTKarnakCondensed";
+    margin: 0.65rem 0;
+}
+
+ul {
+    margin: 0;
+    padding: 0 0 0 1.2rem;
+    text-align: start;
+    line-height: 1.5rem;
+}
+
+.guess-eg {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.eg p {
+    margin: 0.75rem 0 1.5rem 0;
+}
+
+.note {
+    text-align: start;
+    line-height: 1.3rem;
+}
+
+.guess-eg span {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #565758;
+    font-weight: bold;
+    font-size: 20px;
+    box-sizing: border-box;
+}
+
+.subtitle {
+    font-family: "Sanchez", serif;
+    font-size: 22px;
+    margin: 0 0 1.2rem 0;
+}
+
+.back-btn-container {
+    width: 100%;
+}
+
+.back-btn-icon {
+    font-size: 20px;
+}
+
+.correct-colored {
+    animation: flip-card-correct 0.4s 1 linear forwards 0.7s;
+}
+
+.incorrect-colored {
+    animation: flip-card-incorrect 0.4s 1 linear forwards 0.7s;
+}
+
+.almost-correct-colored {
+    animation: flip-card-almost-correct 0.4s 1 linear forwards 0.7s;
+}
+
+@keyframes flip-card-correct {
+    0% {
+        background-color: transparent;
+        transform: scaleY(1);
+        border-color: #565758;
+    }
+    50% {
+        background-color: transparent;
+        transform: scaleY(0);
+        border-color: #565758;
+    }
+    100% {
+        background-color: #b59f3b;
+        transform: scaleY(1);
+        border-color: transparent;
+    }
+}
+
+@keyframes flip-card-incorrect {
+    0% {
+        background-color: transparent;
+        transform: scaleY(1);
+        border-color: #565758;
+    }
+    50% {
+        background-color: transparent;
+        transform: scaleY(0);
+        border-color: #565758;
+    }
+    100% {
+        background-color: #3a3a3c;
+        transform: scaleY(1);
+        border-color: transparent;
+    }
+}
+
+@keyframes flip-card-almost-correct {
+    0% {
+        background-color: transparent;
+        transform: scaleY(1);
+        border-color: #565758;
+    }
+    50% {
+        background-color: transparent;
+        transform: scaleY(0);
+        border-color: #565758;
+    }
+    100% {
+        background-color: #538d4e;
+        transform: scaleY(1);
+        border-color: transparent;
+    }
+}
+
+.centered {
+    z-index: 1;
+    position: absolute;
+    top: 20%;
+}
