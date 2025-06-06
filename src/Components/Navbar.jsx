@@ -3,7 +3,7 @@ import { BiBarChartAlt2 } from "react-icons/bi";
 import { FaRedo, FaPlus } from "react-icons/fa";
 import { IoSettingsSharp } from "react-icons/io5";
 import { IoMdHelpCircleOutline } from "react-icons/io";
-import { BsLightbulb } from "react-icons/bs";
+// import { BsLightbulb } from "react-icons/bs";
 
 function Navbar({ hintBtnFn, statsBtnFn, restartBtnFn, helpBtnFn, settingsBtnFn, createBtnFn, isGameActive, disableRestart }) {
     return(

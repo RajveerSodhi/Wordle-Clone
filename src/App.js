@@ -1,6 +1,6 @@
 import './Styles/App.css';
 import './Styles/VirtualKeyboard.css';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { LuDelete } from "react-icons/lu";
 import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
@@ -33,7 +33,6 @@ function App() {
     let [isLoading, setIsLoading] = useState(true);
     let [fetchError, setFetchError] = useState(null);
     let [toastType, setToastType] = useState(null);
-    let [isHighContrastMode, setIsHighContrastMode] = useState(false);
     let [isKeyboardDisabled, setIsKeyboardDisabled] = useState(false);
     let [isHardMode, setIsHardMode] = useState(false);
     let [guessedLetters, setGuessedLetters] = useState([]);
@@ -48,35 +47,50 @@ function App() {
 
     let enteredWords = useRef(new Map());
 
-    async function isValid() {
-        const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${currentGuess.join("")}`;
+    const fetchAnswer = useCallback(async () => {
+        const url = `https://random-word-api.vercel.app/api?words=1&length=${ANS_SIZE}&type=uppercase`;
         try {
             const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+            // const json = await res.json();
+            // setAnswer(json[0]);
+            setAnswer("REACH");
+        } catch (err) {
+            setFetchError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [ANS_SIZE]);
 
-            if (res.status === 404) {
+    const submitGuess = useCallback(async () => {
+        async function isValid() {
+            const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${currentGuess.join("")}`;
+            try {
+                const res = await fetch(url);
+
+                if (res.status === 404) {
+                    return false;
+                }
+                if (!res.ok) {
+                    throw new Error(`Dictionary API error ${res.status}`);
+                }
+
+                return true;
+            } catch (err) {
+                setFetchError(err.message)
                 return false;
             }
-            if (!res.ok) {
-                throw new Error(`Dictionary API error ${res.status}`);
-            }
-
-            return true;
-        } catch (err) {
-            setFetchError(err.message)
-            return false;
         }
-    }
 
-    function patchCurrentRow(patchFn) {
-        setRows(prev => {
-            const next = prev.map((r, idx) => (idx === currentRowIndex ? [...r] : r));
-            next[currentRowIndex] = next[currentRowIndex].map(patchFn);
-            return next;
-        });
-    }
+        function patchCurrentRow(patchFn) {
+            setRows(prev => {
+                const next = prev.map((r, idx) => (idx === currentRowIndex ? [...r] : r));
+                next[currentRowIndex] = next[currentRowIndex].map(patchFn);
+                return next;
+            });
+        }
 
-    async function submitGuess() {
-        if (!isGameActive || currentGuess.length != ANS_SIZE) return;
+        if (!isGameActive || currentGuess.length !== ANS_SIZE) return;
 
         setIsAnimating(true);
 
@@ -114,7 +128,7 @@ function App() {
         for (let i = 0; i < ANS_SIZE; i++) {
             let guess = currentGuess[i].toUpperCase();
             let match = "incorrect";
-            if (guess == answer[i]) {
+            if (guess === answer[i]) {
                 match = "correct";
                 if (!guessedLetters.includes(guess)) {
                     setGuessedLetters(prev => [...prev, guess]);
@@ -143,7 +157,7 @@ function App() {
         setIsAnimating(false);
         setCurrentRowIndex(prev => prev + 1);
 
-        if (currentGuess.join("").toUpperCase() == answer.toUpperCase()) {
+        if (currentGuess.join("").toUpperCase() === answer.toUpperCase()) {
             setIsGameActive(false);
             setDidUserWin(true);
 
@@ -173,12 +187,29 @@ function App() {
         }
 
         setCurrentGuess([]);
+    }, [currentGuess, currentRowIndex, guessedLetters, ANS_SIZE, isHardMode, isGameActive, MAX_GUESSES, answer]);
+
+    const setCharInput = useCallback((key) => {
+        if (!isGameActive) return;
+        setCurrentGuess(prev => [...prev, key.toUpperCase()]);
+        setRows(prev => {
+            prev[currentRowIndex][currentGuess.length] = {
+                char: key.toUpperCase(),
+                state: "highlighted",
+            };
+            return prev;
+        });
+    }, [currentRowIndex, currentGuess, isGameActive]);
+
+    function onScreenCharInput(key) {
+        if (!isGameActive) return;
+        setCharInput(key);
     }
 
     const sleep = ms => new Promise(r => setTimeout(r, ms));
 
     function setAnsSizeFromSettings(size) {
-        if (currentRowIndex != 0) {
+        if (currentRowIndex !== 0) {
             setToastType("unavailablePast0");
             return;
         }
@@ -188,7 +219,7 @@ function App() {
     }
 
     function setMaxGuessesFromSettings(guesses) {
-        if (currentRowIndex != 0) {
+        if (currentRowIndex !== 0) {
             setToastType("unavailablePast0");
             return;
         }
@@ -197,7 +228,7 @@ function App() {
     }
 
     function setIsHardModeFromSettings(setting) {
-        if (currentRowIndex != 0) {
+        if (currentRowIndex !== 0) {
             setToastType("unavailablePast0");
             return;
         }
@@ -229,10 +260,10 @@ function App() {
     
     function isChar(key) {
         let code = key.toUpperCase().charCodeAt(0)
-        return code >= 65 && code <= 90 && key.length == 1
+        return code >= 65 && code <= 90 && key.length === 1
     }
 
-    function backspaceOnGuess() {
+    const backspaceOnGuess = useCallback(() => {
         if (!isGameActive) return;
         if (currentGuess.length >= 1) {
             setRows(prev => {
@@ -243,39 +274,11 @@ function App() {
             });
             setCurrentGuess(prev => prev.slice(0, -1));
         }
-    }
-
-    function setCharInput(key) {
-        if (!isGameActive) return;
-        setCurrentGuess(prev => [...prev, key.toUpperCase()]);
-        setRows(prev => {
-            prev[currentRowIndex][currentGuess.length] = {
-                char: key.toUpperCase(),
-                state: "highlighted",
-            };
-            return prev;
-        });
-    }
-
-    function onScreenCharInput(key) {
-        if (!isGameActive) return;
-        setCharInput(key);
-    }
-
-    function handleKeyDown(e) {
-        if (e.metaKey || e.ctrlKey || e.altKey) return;
-
-        let key = e.key
-        if (isChar(key) && currentGuess.length < ANS_SIZE) {
-                setCharInput(key);
-        } else if (key === 'Enter') {
-            submitGuess();
-        } else if (key === 'Backspace') {
-            backspaceOnGuess();
-        }
-    }
+    }, [isGameActive, currentGuess, currentRowIndex]);
 
     useEffect(() => {
+        const blankGuess = { char: "", state: "idle", celebrate: false, match: "incorrect", shake: false };
+
         setRows(Array.from({ length: MAX_GUESSES }, () =>
             Array.from({ length: ANS_SIZE }, () => ({ ...blankGuess }))
         ));
@@ -286,7 +289,7 @@ function App() {
         setDidUserWin(false);
         setIsGameActive(true);
         enteredWords.current.clear();
-    }, [ANS_SIZE, MAX_GUESSES]);
+    }, [ANS_SIZE, MAX_GUESSES, fetchAnswer]);
 
     useEffect(() => {
         if (!updateKeyboard) return;
@@ -311,32 +314,30 @@ function App() {
         }
 
         setUpdateKeyboard(false);
-    }, [updateKeyboard]);
-
-    const fetchAnswer = async () => {
-        const url = `https://random-word-api.vercel.app/api?words=1&length=${ANS_SIZE}&type=uppercase`;
-        try {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
-            const json = await res.json();
-            setAnswer(json[0]);
-            // setAnswer("REACH");
-        } catch (err) {
-            setFetchError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    }, [updateKeyboard, ANS_SIZE, currentRowIndex, rows]);
 
     useEffect(() => {
         fetchAnswer();
-    }, []);
+    }, [fetchAnswer]);
 
     useEffect(() => {
+        function handleKeyDown(e) {
+            if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+            let key = e.key
+            if (isChar(key) && currentGuess.length < ANS_SIZE) {
+                    setCharInput(key);
+            } else if (key === 'Enter') {
+                submitGuess();
+            } else if (key === 'Backspace') {
+                backspaceOnGuess();
+            }
+        }
+
         if (!isGameActive || isKeyboardDisabled) return;
         document.addEventListener("keydown", handleKeyDown)
         return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [currentGuess, currentRowIndex, isGameActive,  isKeyboardDisabled])
+    }, [currentGuess, currentRowIndex, isGameActive,  isKeyboardDisabled, ANS_SIZE, backspaceOnGuess, setCharInput, submitGuess])
 
     if (isLoading) return <p>Loading word...</p>;
     if (fetchError) return <p>Error: {fetchError}</p>;
@@ -352,7 +353,7 @@ function App() {
                 createBtnFn={() => setShowCreateDialog(true)}
                 isGameActive={isGameActive}
                 didUserWin={didUserWin}
-                disableRestart={isAnimating || (currentRowIndex == 0)}
+                disableRestart={isAnimating || (currentRowIndex === 0)}
             />
 
             {toastType && (
@@ -395,10 +396,10 @@ function App() {
                                     {
                                         row.map((letter, j) => {
                                             return (
-                                                <div className={((i == 2 && j == 0) || (i == 2 && j == keyRows[2].length - 1)) ? "keyrow" : ""} key={j}>
-                                                    { (i == 2 && j == 0) && <button className="key spl-key enter prevent-select" onClick={ submitGuess }>ENTER</button> }
+                                                <div className={((i === 2 && j === 0) || (i === 2 && j === keyRows[2].length - 1)) ? "keyrow" : ""} key={j}>
+                                                    { (i === 2 && j === 0) && <button className="key spl-key enter prevent-select" onClick={ submitGuess }>ENTER</button> }
                                                     <button className="key prevent-select" tabIndex="-1" id={`key_${keyRows[i][j].toUpperCase()}`} onMouseDown={(e) => e.preventDefault()} onClick={ () => onScreenCharInput(keyRows[i][j]) }>{letter}</button>
-                                                    { (i == 2 && j == keyRows[2].length - 1) && <button className="key spl-key delete prevent-select" onClick={ backspaceOnGuess }><LuDelete /></button> }
+                                                    { (i === 2 && j === keyRows[2].length - 1) && <button className="key spl-key delete prevent-select" onClick={ backspaceOnGuess }><LuDelete /></button> }
                                                 </div>
                                             );
                                         })

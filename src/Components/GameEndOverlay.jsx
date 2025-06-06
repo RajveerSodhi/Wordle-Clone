@@ -19,12 +19,12 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, res
                 let guess = rows[i][j]
                 let guess_match = guess.match
                 let guess_state = guess.state
-                if (guess_state != "submitted") continue;
-                if (guess_match == "correct" ) {
+                if (guess_state !== "submitted") continue;
+                if (guess_match === "correct" ) {
                     result += "🟩";
-                } else if (guess_match == "almost-correct") {
+                } else if (guess_match === "almost-correct") {
                     result += "🟨";
-                } else if (guess_match == "incorrect") {
+                } else if (guess_match === "incorrect") {
                     result += "⬛️";
                 }
             }

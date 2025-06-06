@@ -18,9 +18,9 @@ function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration
     }, [duration, exitMs, onClose]);
 
     function getMessage() {
-        if (type == "word-dne") {
+        if (type === "word-dne") {
             return "Not in word list";
-        } else if (type == "user-won") {
+        } else if (type === "user-won") {
             switch (currentRowIndex) {
                 case 1: return "Genius";
                 case 2: return "Magnificent";
@@ -30,9 +30,9 @@ function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration
                 case 6: return "Phew";
                 default: return "Splendid";
             }
-        } else if (type == "user-lost") {
+        } else if (type === "user-lost") {
             return answer.toUpperCase();
-        } else if (type == "unavailablePast0") {
+        } else if (type === "unavailablePast0") {
             return "Only available at the start of a game";
         } else if (type.includes("hardMode")) {
             let missingLetter = type.split("_")[1].toUpperCase();
