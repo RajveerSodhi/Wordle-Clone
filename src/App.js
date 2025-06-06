@@ -319,8 +319,8 @@ function App() {
             const res = await fetch(url);
             if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
             const json = await res.json();
-            // setAnswer(json[0]);
-            setAnswer("REACH");
+            setAnswer(json[0]);
+            // setAnswer("REACH");
         } catch (err) {
             setFetchError(err.message);
         } finally {
