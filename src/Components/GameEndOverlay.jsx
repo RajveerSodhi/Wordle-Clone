@@ -5,7 +5,7 @@ import { MdOutlineStarPurple500 } from "react-icons/md";
 import { useState } from 'react';
 
 function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, restartGameFn}) {
-    const [showCopiedToast, setShowCopiedToast] = useState(false);
+    const [showCopiedResultToast, setShowCopiedResultToast] = useState(false);
 
     function getSharableResult(rows) {
         let max_tries = rows.length;
@@ -33,7 +33,7 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, res
         result = result.trim();
 
         navigator.clipboard.writeText(result).then(() => {
-            setShowCopiedToast(true);
+            setShowCopiedResultToast(true);
         });
     }
 
@@ -52,7 +52,7 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, res
                     <h1>{ didUserWin ? "Congratulations!" : "So Close!" }</h1>
                 </div>
 
-                { showCopiedToast && <div className="copy-toast">Copied results to clipboard!</div> }
+                { showCopiedResultToast && <div className="copy-result-toast">Copied results to clipboard!</div> }
 
                 <div className="main-btn-container">
                     <button className="main-btn" onClick={() => getSharableResult(rows, didUserWin)}>

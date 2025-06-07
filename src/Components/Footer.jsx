@@ -1,8 +1,8 @@
 import '../Styles/Footer.css';
 
-function Footer() {
+function Footer({lobbyFooter = false}) {
     return (
-        <footer>
+        <footer className={lobbyFooter ? "lobby-footer" : ""}>
             <ul>
                 <li>Wordle Clone by <a href="https://www.rajveersodhi.com" target = "_blank" rel="noreferrer">Rajveer Sodhi</a></li>
                 <li>|</li>

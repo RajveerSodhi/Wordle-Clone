@@ -113,7 +113,7 @@
     gap: 20px;
 }
 
-.copy-toast {
+.copy-result-toast {
     color: black;
     border-radius: 8px;
     background-color: white;
@@ -121,11 +121,15 @@
     font-weight: bold;
     font-size: 0.9rem;
     width: 220px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 0 auto;
     position: absolute;
     top: 70%;
     left: 50%;
     transform: translateX(-50%);
+    animation: fade-up 0.3s linear 1 forwards;
 }
 
 @keyframes fade-in {

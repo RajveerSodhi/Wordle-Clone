@@ -1,0 +1,120 @@
+.lobby {
+    background-color: #e3e3e1;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.lobby-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: "Libre Franklin", sans-serif;
+}
+
+.lobby-content h3 { 
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin: 0.1rem 0;
+    font-family: "Sanchez", serif;
+    text-align: center;
+}
+
+.lobby-content h1 {
+    font-size: 44px;
+    font-family: "NYTKarnakCondensed";
+    margin: 0.65rem 0;
+}
+
+p.game-id {
+    display: flex;
+    flex-direction: row;
+    font-weight: bold;
+    font-size: 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.copy-id-btn {
+    border: none;
+    background: none;
+    text-decoration: underline;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.lobby-btns-container .play-btn {
+    background-color: black;
+    color: white;
+    text-transform: capitalize;
+    width: 200px;
+    height: 44px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.lobby-btns-container {
+    margin: 1.75rem 0;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.lobby-btns-container .share-btn {
+    background-color: transparent;
+    color: black;
+    text-transform: capitalize;
+    width: 200px;
+    height: 44px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    box-sizing: border-box;
+    border: 1px solid black;
+}
+
+.copy-link-toast {
+    color: white;
+    border-radius: 8px;
+    background-color: black;
+    padding: 0.75rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+    width: 220px;
+    margin: 0 auto;
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateX(-50%);
+    animation: fade-up 0.25s linear 1 forwards;
+}
+
+@keyframes fade-up {
+	from {
+		opacity: 0;
+        top: 17%;
+	}
+	to {
+		opacity: 1;
+        top: 15%;
+	}
+}

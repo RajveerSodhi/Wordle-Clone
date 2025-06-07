@@ -1,6 +1,7 @@
 import './Styles/App.css';
 import './Styles/VirtualKeyboard.css';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate, redirect } from "react-router-dom";
 import { LuDelete } from "react-icons/lu";
 import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
@@ -11,6 +12,7 @@ import RestartConfirmDialog from './Components/RestartConfirmDialog';
 import HelpDialog from './Components/HelpDialog';
 import SettingsDialog from './Components/SettingsDialog';
 import CreateDialog from './Components/CreateDialog';
+import LobbyScreen from './Components/LobbyScreen';
 
 function App() {
     const keyRows = [
@@ -38,8 +40,9 @@ function App() {
     let [guessedLetters, setGuessedLetters] = useState([]);
     let [updateKeyboard, setUpdateKeyboard] = useState(false);
     let [showEndScreen, setShowEndScreen] = useState(false);
+    let [showLobbyScreen, setShowLobbyScreen] = useState(true);
     let [showRestartConfirmDialog, setShowRestartConfirmDialog] = useState(false);
-    let [showHelpDialog, setShowHelpDialog] = useState(true);
+    let [showHelpDialog, setShowHelpDialog] = useState(false);
     let [showSettingsDialog, setShowSettingsDialog] = useState(false);
     let [showCreateDialog, setShowCreateDialog] = useState(false);
     let [isAnimating, setIsAnimating] = useState(false); 
@@ -50,8 +53,8 @@ function App() {
     const fetchAnswer = useCallback(async () => {
         const url = `https://random-word-api.vercel.app/api?words=1&length=${ANS_SIZE}&type=uppercase`;
         try {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+            // const res = await fetch(url);
+            // if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
             // const json = await res.json();
             // setAnswer(json[0]);
             setAnswer("REACH");
@@ -66,14 +69,14 @@ function App() {
         async function isValid() {
             const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${currentGuess.join("")}`;
             try {
-                const res = await fetch(url);
+                // const res = await fetch(url);
 
-                if (res.status === 404) {
-                    return false;
-                }
-                if (!res.ok) {
-                    throw new Error(`Dictionary API error ${res.status}`);
-                }
+                // if (res.status === 404) {
+                //     return false;
+                // }
+                // if (!res.ok) {
+                //     throw new Error(`Dictionary API error ${res.status}`);
+                // }
 
                 return true;
             } catch (err) {
@@ -343,92 +346,97 @@ function App() {
     if (fetchError) return <p>Error: {fetchError}</p>;
 
     return (
-        <div className="App">
+        <>
+            { showLobbyScreen && <LobbyScreen showLobbyScreen={() => setShowLobbyScreen(false)} /> }
+            {
+                !showLobbyScreen &&
+                    <div className="App">
+                        <Navbar
+                            statsBtnFn={() => setShowEndScreen(true)}
+                            restartBtnFn={() => setShowRestartConfirmDialog(true)}
+                            helpBtnFn={() => setShowHelpDialog(true)}
+                            settingsBtnFn={() => setShowSettingsDialog(true)}
+                            createBtnFn={() => setShowCreateDialog(true)}
+                            isGameActive={isGameActive}
+                            didUserWin={didUserWin}
+                            disableRestart={isAnimating || (currentRowIndex === 0)}
+                        />
 
-            <Navbar
-                statsBtnFn={() => setShowEndScreen(true)}
-                restartBtnFn={() => setShowRestartConfirmDialog(true)}
-                helpBtnFn={() => setShowHelpDialog(true)}
-                settingsBtnFn={() => setShowSettingsDialog(true)}
-                createBtnFn={() => setShowCreateDialog(true)}
-                isGameActive={isGameActive}
-                didUserWin={didUserWin}
-                disableRestart={isAnimating || (currentRowIndex === 0)}
-            />
+                        {toastType && (
+                            <Toast
+                                type={toastType}
+                                answer={answer}
+                                currentRowIndex={currentRowIndex}
 
-            {toastType && (
-                <Toast
-                    type={toastType}
-                    answer={answer}
-                    currentRowIndex={currentRowIndex}
+                                onClose={() => setToastType(null)}
+                            />
+                        )}
 
-                    onClose={() => setToastType(null)}
-                />
-            )}
-
-            <main>
-                <div className="board">
-                    {
-                        rows.map((row, i) =>
-                            <div className="row" key={i}>
+                        <main>
+                            <div className="board">
                                 {
-                                    row.map((guess, j) => {
-                                        return <GuessBox
-                                                    key={j}
-                                                    state={guess.state}
-                                                    match={guess.match}
-                                                    char={guess.char}
-                                                    celebrate={guess.celebrate}
-                                                    shake={guess.shake}
-                                                />
+                                    rows.map((row, i) =>
+                                        <div className="row" key={i}>
+                                            {
+                                                row.map((guess, j) => {
+                                                    return <GuessBox
+                                                                key={j}
+                                                                state={guess.state}
+                                                                match={guess.match}
+                                                                char={guess.char}
+                                                                celebrate={guess.celebrate}
+                                                                shake={guess.shake}
+                                                            />
+                                                })
+                                            }
+                                        </div>
+                                    )
+                                }
+                            </div>
+
+                            <div className="keyboard">
+                                {
+                                    keyRows.map((row, i) => {
+                                        return (
+                                            <div className="keyrow" key={i}>
+                                                {
+                                                    row.map((letter, j) => {
+                                                        return (
+                                                            <div className={((i === 2 && j === 0) || (i === 2 && j === keyRows[2].length - 1)) ? "keyrow" : ""} key={j}>
+                                                                { (i === 2 && j === 0) && <button className="key spl-key enter prevent-select" onClick={ submitGuess }>ENTER</button> }
+                                                                <button className="key prevent-select" tabIndex="-1" id={`key_${keyRows[i][j].toUpperCase()}`} onMouseDown={(e) => e.preventDefault()} onClick={ () => onScreenCharInput(keyRows[i][j]) }>{letter}</button>
+                                                                { (i === 2 && j === keyRows[2].length - 1) && <button className="key spl-key delete prevent-select" onClick={ backspaceOnGuess }><LuDelete /></button> }
+                                                            </div>
+                                                        );
+                                                    })
+                                                }
+                                            </div>
+                                        );
                                     })
                                 }
                             </div>
-                        )
-                    }
-                </div>
+                        </main>
 
-                <div className="keyboard">
-                    {
-                        keyRows.map((row, i) => {
-                            return (
-                                <div className="keyrow" key={i}>
-                                    {
-                                        row.map((letter, j) => {
-                                            return (
-                                                <div className={((i === 2 && j === 0) || (i === 2 && j === keyRows[2].length - 1)) ? "keyrow" : ""} key={j}>
-                                                    { (i === 2 && j === 0) && <button className="key spl-key enter prevent-select" onClick={ submitGuess }>ENTER</button> }
-                                                    <button className="key prevent-select" tabIndex="-1" id={`key_${keyRows[i][j].toUpperCase()}`} onMouseDown={(e) => e.preventDefault()} onClick={ () => onScreenCharInput(keyRows[i][j]) }>{letter}</button>
-                                                    { (i === 2 && j === keyRows[2].length - 1) && <button className="key spl-key delete prevent-select" onClick={ backspaceOnGuess }><LuDelete /></button> }
-                                                </div>
-                                            );
-                                        })
-                                    }
-                                </div>
-                            );
-                        })
-                    }
-                </div>
-            </main>
+                        <Footer />
 
-            <Footer />
+                        {
+                            showEndScreen && <GameEndOverlay
+                                rows={rows}
+                                didUserWin={didUserWin}
+                                onClose={() => setShowEndScreen(false)}
+                                currentRowIndex={currentRowIndex}
+                                answer={answer}
+                                restartGameFn={restartGame}
+                            />
+                        }
 
-            {
-                showEndScreen && <GameEndOverlay
-                    rows={rows}
-                    didUserWin={didUserWin}
-                    onClose={() => setShowEndScreen(false)}
-                    currentRowIndex={currentRowIndex}
-                    answer={answer}
-                    restartGameFn={restartGame}
-                />
+                        { showRestartConfirmDialog && <RestartConfirmDialog onClose={() => setShowRestartConfirmDialog(false)} restartGame={restartGame} /> }
+                        { showHelpDialog && <HelpDialog onClose={() => setShowHelpDialog(false)} /> }
+                        { showSettingsDialog && <SettingsDialog onClose={() => setShowSettingsDialog(false)} max_guesses={MAX_GUESSES} ans_size={ANS_SIZE} setAnsSize={setAnsSizeFromSettings} setMaxGuesses={setMaxGuessesFromSettings} isHardMode={isHardMode} setIsHardMode={setIsHardModeFromSettings} isKeyboardDisabled={isKeyboardDisabled} setIsKeyboardDisabled={setIsKeyboardDisabled} /> }
+                        { showCreateDialog && <CreateDialog onClose={() => setShowCreateDialog(false)} /> }
+                    </div>
             }
-
-            { showRestartConfirmDialog && <RestartConfirmDialog onClose={() => setShowRestartConfirmDialog(false)} restartGame={restartGame} /> }
-            { showHelpDialog && <HelpDialog onClose={() => setShowHelpDialog(false)} /> }
-            { showSettingsDialog && <SettingsDialog onClose={() => setShowSettingsDialog(false)} max_guesses={MAX_GUESSES} ans_size={ANS_SIZE} setAnsSize={setAnsSizeFromSettings} setMaxGuesses={setMaxGuessesFromSettings} isHardMode={isHardMode} setIsHardMode={setIsHardModeFromSettings} isKeyboardDisabled={isKeyboardDisabled} setIsKeyboardDisabled={setIsKeyboardDisabled} /> }
-            { showCreateDialog && <CreateDialog onClose={() => setShowCreateDialog(false)} /> }
-        </div>
+        </>
     );
 }
 
