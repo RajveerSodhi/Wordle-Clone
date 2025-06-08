@@ -1,5 +1,6 @@
 import '../Styles/SettingsDialog.css';
 import { ImCross } from "react-icons/im";
+import { motion } from "motion/react";
 import BackgroundOverlay from './BackgroundOverlay';
 
 function SettingsDialog({ onClose, max_guesses, ans_size, setAnsSize, setMaxGuesses, isHardMode, setIsHardMode, isKeyboardDisabled, setIsKeyboardDisabled }) {
@@ -7,7 +8,13 @@ function SettingsDialog({ onClose, max_guesses, ans_size, setAnsSize, setMaxGues
         <>
             <BackgroundOverlay />
 
-            <div className="dialog centered">
+            <motion.div
+                className="dialog centered"
+                initial={{opacity: 0, transform: "translateY(2rem)", pointerEvents: 'none'}}
+                animate={{opacity: 1, transform: "translateY(0)", pointerEvents: 'all'}}
+                exit={{ opacity: 0, transform: "translateY(2rem)", pointerEvents: 'none' }}
+                transition={{ duration: 0.2, ease: "linear" }}
+            >
                 <div className="back-btn-container">
                     <button className="back-btn" onClick={() => {onClose()}}><ImCross className="back-btn-icon" /></button>
                 </div>
@@ -96,7 +103,7 @@ function SettingsDialog({ onClose, max_guesses, ans_size, setAnsSize, setMaxGues
                         <span className="slider round"></span>
                     </label>
                 </section>
-            </div>
+            </motion.div>
         </>
     );
 }

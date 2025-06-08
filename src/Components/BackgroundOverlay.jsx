@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { motion } from "motion/react";
 import '../Styles/BackgroundOverlay.css';
 
 function BackgroundOverlay() {
@@ -18,7 +19,15 @@ function BackgroundOverlay() {
         };
     }, []);
 
-    return(<div className="bg-overlay"></div>);
+    return(
+        <motion.div
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{ opacity: 0}}
+            transition={{ duration: 0.2, ease: "linear" }}
+            className="bg-overlay"
+        ></motion.div>
+    );
 }
 
 export default BackgroundOverlay;

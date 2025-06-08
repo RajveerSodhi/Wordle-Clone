@@ -3,6 +3,7 @@ import { IoShareSocialOutline, IoPlayOutline } from "react-icons/io5";
 import { ImCross } from "react-icons/im";
 import { MdOutlineStarPurple500 } from "react-icons/md";
 import { useState } from 'react';
+import { motion } from "motion/react";
 
 function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, restartGameFn}) {
     const [showCopiedResultToast, setShowCopiedResultToast] = useState(false);
@@ -38,8 +39,19 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, res
     }
 
     return (
-        <div className="background">
-            <section>
+        <motion.div
+            className="background"
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{ opacity: 0}}
+            transition={{ duration: 0.2, ease: "linear" }}
+        >
+            <motion.section
+                initial={{opacity: 0, transform: "translateY(2rem)", pointerEvents: 'none'}}
+                animate={{opacity: 1, transform: "translateY(0)", pointerEvents: 'all'}}
+                exit={{ opacity: 0, transform: "translateY(2rem)", pointerEvents: 'none' }}
+                transition={{ duration: 0.35, ease: "linear" }}
+            >
                 <div className="back-btn-container">
                     <button className="back-btn" onClick={() => {onClose()}}>Back to puzzle <ImCross className="back-btn-icon" /></button>
                 </div>
@@ -63,8 +75,8 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, res
                         Play Again <IoPlayOutline className="btn-icon" />
                     </button>
                 </div>
-            </section>
-        </div>
+            </motion.section>
+        </motion.div>
     );
 }
 

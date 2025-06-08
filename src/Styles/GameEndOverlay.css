@@ -8,11 +8,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    animation: fade-in 0.2s 1 linear;
 }
 
 .background section {
-    animation: fade-up 0.35s 1 ease-out forwards;
     animation-delay: 0.15s;
     opacity: 0;
     display: flex;
@@ -130,15 +128,6 @@
     left: 50%;
     transform: translateX(-50%);
     animation: fade-up 0.3s linear 1 forwards;
-}
-
-@keyframes fade-in {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
 }
 
 @keyframes fade-up {
