@@ -194,7 +194,8 @@ function App() {
     }, [currentGuess, currentRowIndex, guessedLetters, ANS_SIZE, isHardMode, isGameActive, MAX_GUESSES, answer]);
 
     const setCharInput = useCallback((key) => {
-        if (!isGameActive) return;
+        if (!isGameActive || currentGuess.length >= ANS_SIZE) return;
+        
         setCurrentGuess(prev => [...prev, key.toUpperCase()]);
         setRows(prev => {
             prev[currentRowIndex][currentGuess.length] = {
@@ -430,12 +431,48 @@ function App() {
                         />
                     }
 
-                    { showRestartConfirmDialog && <RestartConfirmDialog key="restart" onClose={() => setShowRestartConfirmDialog(false)} restartGame={restartGame} /> }
-                    { showHelpDialog && <HelpDialog key="help" onClose={() => setShowHelpDialog(false)} /> }
-                    { showSettingsDialog && <SettingsDialog key="settings" onClose={() => setShowSettingsDialog(false)} max_guesses={MAX_GUESSES} ans_size={ANS_SIZE} setAnsSize={setAnsSizeFromSettings} setMaxGuesses={setMaxGuessesFromSettings} isHardMode={isHardMode} setIsHardMode={setIsHardModeFromSettings} isKeyboardDisabled={isKeyboardDisabled} setIsKeyboardDisabled={setIsKeyboardDisabled} /> }
-                    { showCreateDialog && <CreateDialog key="create" onClose={() => setShowCreateDialog(false)} /> }
+                    {
+                        showRestartConfirmDialog && <RestartConfirmDialog
+                            key="restart"
+                            onClose={() => setShowRestartConfirmDialog(false)}
+                            restartGame={restartGame}
+                        />
+                    }
 
-                    { showLobbyScreen && <LobbyScreen setShowLobbyScreen={() => setShowLobbyScreen(false)} key="lobby" /> }
+                    {
+                        showHelpDialog && <HelpDialog
+                            key="help"
+                            onClose={() => setShowHelpDialog(false)}
+                        />
+                    }
+                    {
+                        showSettingsDialog && <SettingsDialog
+                            key="settings"
+                            onClose={() => setShowSettingsDialog(false)}
+                            max_guesses={MAX_GUESSES}
+                            ans_size={ANS_SIZE}
+                            setAnsSize={setAnsSizeFromSettings}
+                            setMaxGuesses={setMaxGuessesFromSettings}
+                            isHardMode={isHardMode}
+                            setIsHardMode={setIsHardModeFromSettings}
+                            isKeyboardDisabled={isKeyboardDisabled}
+                            setIsKeyboardDisabled={setIsKeyboardDisabled}
+                        />
+                    }
+
+                    {
+                        showCreateDialog && <CreateDialog
+                            key="create"
+                            onClose={() => setShowCreateDialog(false)}
+                        />
+                    }
+
+                    {
+                        showLobbyScreen && <LobbyScreen
+                            key="lobby"
+                            setShowLobbyScreen={() => setShowLobbyScreen(false)}
+                        />
+                    }
                 </AnimatePresence>
             </div>
         </>
