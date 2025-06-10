@@ -1,0 +1,54 @@
+.custom-game-input-container {
+    margin-top: 1.5rem;
+}
+
+.input-inner-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.input-label {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.input-box {
+    width: 100%;
+    height: 44px;
+    border-radius: 8px;
+    padding: 2px 10px;
+    border: none;
+    margin-bottom: 0.5rem;
+    outline: none;
+    font-weight: bold;
+    font-size: 22px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.char-limit-desc {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    gap: 4px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.char-limit-desc .min-lim,
+.char-limit-desc .max-lim {
+    font-size: 14px;
+    color: #7e7e7e;
+    margin-top: 4px;
+    font-weight: 400;
+}
+
+.copy-custom-link-btn {
+    margin-top: 1.5rem;
+}

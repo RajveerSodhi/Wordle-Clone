@@ -58,6 +58,14 @@ p.addn-info-text {
     cursor: pointer;
 }
 
+.addn-info-btn.light {
+    color: white;
+}
+
+.addn-info-text.light {
+    color: white;
+}
+
 .lobby-btns-container .play-btn {
     background-color: black;
     color: white;

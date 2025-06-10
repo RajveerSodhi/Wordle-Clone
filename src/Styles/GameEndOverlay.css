@@ -15,6 +15,8 @@
     opacity: 0;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
     gap: 10rem;
     width: 75%;
@@ -109,34 +111,4 @@
     justify-content: center;
     align-items: center;
     gap: 20px;
-}
-
-.copy-result-toast {
-    color: black;
-    border-radius: 8px;
-    background-color: white;
-    padding: 0.75rem;
-    font-weight: bold;
-    font-size: 0.9rem;
-    width: 220px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-    position: absolute;
-    top: 70%;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: fade-up 0.3s linear 1 forwards;
-}
-
-@keyframes fade-up {
-	from {
-		opacity: 0;
-        transform: translateY(2rem);
-	}
-	to {
-		opacity: 1;
-        transform: translateY(0);
-	}
 }

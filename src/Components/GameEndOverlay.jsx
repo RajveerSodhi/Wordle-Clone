@@ -1,13 +1,20 @@
 import '../Styles/GameEndOverlay.css';
 import { IoShareSocialOutline, IoPlayOutline } from "react-icons/io5";
 import { ImCross } from "react-icons/im";
-import { MdOutlineStarPurple500 } from "react-icons/md";
+import { MdOutlineStarPurple500, MdOutlineContentCopy } from "react-icons/md";
 import { useState } from 'react';
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
+import Toast from './Toast';
 
 function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, restartGameFn}) {
-    const [showCopiedResultToast, setShowCopiedResultToast] = useState(false);
+    const [gameEndToastType, setGameEndToastType] = useState("");
 
+    function copyGameLink() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            setGameEndToastType("gameEnd-copyGameLink");
+        });
+    }
+    
     function getSharableResult(rows) {
         let max_tries = rows.length;
         let ans_length = rows[0].length;
@@ -34,7 +41,7 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, res
         result = result.trim();
 
         navigator.clipboard.writeText(result).then(() => {
-            setShowCopiedResultToast(true);
+            setGameEndToastType("gameEnd-copyGameResult");
         });
     }
 
@@ -64,17 +71,25 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, res
                     <h1>{ didUserWin ? "Congratulations!" : "So Close!" }</h1>
                 </div>
 
-                { showCopiedResultToast && <div className="copy-result-toast">Copied results to clipboard!</div> }
+                <AnimatePresence>
+                { gameEndToastType &&
+                    <Toast
+                        type={gameEndToastType}
+                        onClose={() => setGameEndToastType(null)}
+                    />
+                }
+            </AnimatePresence>
 
                 <div className="main-btn-container">
                     <button className="main-btn" onClick={() => getSharableResult(rows, didUserWin)}>
-                        Share <IoShareSocialOutline className="btn-icon" />
+                        Share Results <IoShareSocialOutline className="btn-icon" />
                     </button>
 
                     <button className="main-btn" onClick={() => restartGameFn()}>
                         Play Again <IoPlayOutline className="btn-icon" />
                     </button>
                 </div>
+                <p className="addn-info-text light">Game ID: <button className="addn-info-btn light" onClick={copyGameLink}>Share this puzzle <MdOutlineContentCopy /></button></p>
             </motion.section>
         </motion.div>
     );

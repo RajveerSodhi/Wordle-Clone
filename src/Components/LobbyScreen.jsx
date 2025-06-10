@@ -16,13 +16,13 @@ function LobbyScreen({setShowLobbyScreen, setIsGameActive, code}) {
 
     function copyGameLink() {
         navigator.clipboard.writeText(window.location.href).then(() => {
-            setLobbyToastType("copyGameLink");
+            setLobbyToastType("lobby-copyGameLink");
         });
     }
 
     function copyGameID() {
         navigator.clipboard.writeText(location.pathname.slice(0,)).then(() => {
-            setLobbyToastType("copyGameID");
+            setLobbyToastType("lobby-copyGameID");
         });
     }
 

@@ -2,12 +2,16 @@
     max-width: 520px;
 }
 
-.settings-title {
-    text-transform: uppercase;
-    font-size: 20px;
+.dialog.center-content {
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog-title {
+    text-transform: capitalize;
     text-align: center;
-    width: 100%;
-    margin: 0 0 0.5rem 0;
+    width: auto;
+    margin: -1.8rem 0 1.5rem 0;
 }
 
 .setting {

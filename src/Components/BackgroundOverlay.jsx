@@ -2,16 +2,18 @@ import { useEffect } from 'react';
 import { motion } from "motion/react";
 import '../Styles/BackgroundOverlay.css';
 
-function BackgroundOverlay() {
+function BackgroundOverlay({isCreateGameDialog = false}) {
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.metaKey || e.ctrlKey || e.altKey) return;
 
-            e.preventDefault();
+            if (!isCreateGameDialog) {
+                e.preventDefault();
             e.stopPropagation();
+            }
         };
 
-        document.activeElement.blur();
+        if (!isCreateGameDialog) document.activeElement.blur();
         document.addEventListener('keydown', handleKeyDown, true);
 
         return () => {

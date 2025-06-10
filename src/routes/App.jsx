@@ -19,7 +19,7 @@ import GameEndOverlay from '../Components/GameEndOverlay';
 import RestartConfirmDialog from '../Components/RestartConfirmDialog';
 import HelpDialog from '../Components/HelpDialog';
 import SettingsDialog from '../Components/SettingsDialog';
-import CreateDialog from '../Components/CreateDialog';
+import CreateGameDialog from '../Components/CreateGameDialog';
 import LobbyScreen from '../Components/LobbyScreen';
 
 function App() {
@@ -104,7 +104,7 @@ function App() {
     let [showRestartConfirmDialog, setShowRestartConfirmDialog] = useState(false);
     let [showHelpDialog, setShowHelpDialog] = useState(false);
     let [showSettingsDialog, setShowSettingsDialog] = useState(false);
-    let [showCreateDialog, setShowCreateDialog] = useState(false);
+    let [showCreateGameDialog, setShowCreateGameDialog] = useState(false);
     let [isAnimating, setIsAnimating] = useState(false); 
     // let [keys, setKeys] = useState(Array.from({ length: 26 }, () => ({ ...blankKey })))
     let enteredWords = useRef(new Map());
@@ -341,7 +341,7 @@ function App() {
             if (e.metaKey || e.ctrlKey || e.altKey) return;
 
             let key = e.key
-            if (isChar(key) && currentGuess.length < ANS_SIZE) {
+            if (isChar(key) && currentGuess.length < ANS_SIZE && !showCreateGameDialog) {
                     setCharInput(key);
             } else if (key === 'Enter') {
                 submitGuess();
@@ -353,7 +353,7 @@ function App() {
         if (!isGameActive || isKeyboardDisabled) return;
         document.addEventListener("keydown", handleKeyDown)
         return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [currentGuess, currentRowIndex, isGameActive,  isKeyboardDisabled, ANS_SIZE, backspaceOnGuess, setCharInput, submitGuess])
+    }, [currentGuess, showCreateGameDialog, currentRowIndex, isGameActive,  isKeyboardDisabled, ANS_SIZE, backspaceOnGuess, setCharInput, submitGuess])
 
     return (
         <>  
@@ -363,7 +363,7 @@ function App() {
                     restartBtnFn={() => setShowRestartConfirmDialog(true)}
                     helpBtnFn={() => setShowHelpDialog(true)}
                     settingsBtnFn={() => setShowSettingsDialog(true)}
-                    createBtnFn={() => setShowCreateDialog(true)}
+                    createBtnFn={() => setShowCreateGameDialog(true)}
                     isGameActive={isGameActive}
                     didUserWin={didUserWin}
                     disableRestart={isAnimating || (currentRowIndex === 0)}
@@ -461,9 +461,10 @@ function App() {
                     }
 
                     {
-                        showCreateDialog && <CreateDialog
+                        showCreateGameDialog && <CreateGameDialog
                             key="create"
-                            onClose={() => setShowCreateDialog(false)}
+                            onClose={() => setShowCreateGameDialog(false)}
+                            setToastType={() => setToastType("copyCustomLink")}
                         />
                     }
 

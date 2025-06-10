@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { motion } from "motion/react";
 
 function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration = 2000}) {
-    const isDark = ["copyGameID", "copyGameLink"].includes(type);
+    const isDark = type.includes("lobby");
     useEffect(() => {
         const killTimer = setTimeout(() => {
             onClose();
@@ -38,6 +38,10 @@ function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration
             return "Copied game ID to clipboard!"
         } else if (type.includes("copyGameLink")) {
             return "Copied game link to clipboard!"
+        } else if (type.includes("copyGameResult")) {
+            return "Copied results to clipboard!";
+        } else if (type.includes("copyCustomLink")) {
+            return "Copied custom game link to clipboard!";
         }
     }
 

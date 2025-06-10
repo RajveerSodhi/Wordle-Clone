@@ -9,7 +9,7 @@ function SettingsDialog({ onClose, max_guesses, ans_size, setAnsSize, setMaxGues
             <BackgroundOverlay />
 
             <motion.div
-                className="dialog centered"
+                className="dialog centered center-content"
                 initial={{opacity: 0, transform: "translateY(2rem)", pointerEvents: 'none'}}
                 animate={{opacity: 1, transform: "translateY(0)", pointerEvents: 'all'}}
                 exit={{ opacity: 0, transform: "translateY(2rem)", pointerEvents: 'none' }}
@@ -19,7 +19,7 @@ function SettingsDialog({ onClose, max_guesses, ans_size, setAnsSize, setMaxGues
                     <button className="back-btn" onClick={() => {onClose()}}><ImCross className="back-btn-icon" /></button>
                 </div>
 
-                <h5 className="settings-title">Settings</h5>
+                <h2 className="dialog-title">Settings</h2>
 
                 <section className="setting">
                     <div className="setting-name-desc-container">
