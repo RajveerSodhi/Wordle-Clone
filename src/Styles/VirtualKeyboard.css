@@ -4,6 +4,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+    padding: 0 2rem;
 }
 
 .keyrow {
@@ -18,7 +19,6 @@
     background-color: #818384;
     color: #F8F8F8;
     border-radius: 4px;
-    min-width: 36px;
     width: 42px;
     height: 58px;
     text-transform: uppercase;
@@ -53,4 +53,10 @@
 
 .key.delete {
     font-size: 22px;
+}
+
+@media only screen and (max-width: 600px) {
+    .key {
+        width: 36px;
+    }
 }
