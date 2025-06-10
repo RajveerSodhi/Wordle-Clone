@@ -55,7 +55,7 @@ function App() {
             console.error(err);
             return false;
         }
-    });
+    }, []);
 
     const navigate = useNavigate();
     const { code } = useParams();
@@ -121,14 +121,14 @@ function App() {
         if (!isGameActive || currentGuess.length !== ANS_SIZE) return;
 
         setIsAnimating(true);
-
-        let isWordValid = enteredWords.current.get(currentGuess.join(""));
+        let inputWord = currentGuess.join("").toUpperCase();
+        let isWordValid = enteredWords.current.get(inputWord);
         if (isWordValid === undefined) {
-            isWordValid = await isValid(currentGuess.join(""));
-            enteredWords.current.set(currentGuess.join(""), isWordValid);
+            isWordValid = await isValid(inputWord);
+            enteredWords.current.set(inputWord, isWordValid);
         }
 
-        if (!isWordValid) {
+        if (!isWordValid && inputWord.toUpperCase) {
             setToastType("word-dne");
             patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
             await sleep(500);
@@ -185,7 +185,7 @@ function App() {
         setIsAnimating(false);
         setCurrentRowIndex(prev => prev + 1);
 
-        if (currentGuess.join("").toUpperCase() === answer.toUpperCase()) {
+        if (inputWord === answer) {
             setIsGameActive(false);
             setDidUserWin(true);
 
@@ -244,7 +244,6 @@ function App() {
         }
 
         setAnsSize(size);
-        console.log(size);
     }
 
     function setMaxGuessesFromSettings(guesses) {
@@ -370,16 +369,6 @@ function App() {
                     disableRestart={isAnimating || (currentRowIndex === 0)}
                 />
 
-                {toastType && (
-                    <Toast
-                        type={toastType}
-                        answer={answer}
-                        currentRowIndex={currentRowIndex}
-
-                        onClose={() => setToastType(null)}
-                    />
-                )}
-
                 <main>
                     <div className="board">
                         {
@@ -427,6 +416,7 @@ function App() {
 
                 <Footer />
                 
+                {/* Animated overlays */}
                 <AnimatePresence>
                     {
                         showEndScreen && <GameEndOverlay
@@ -454,6 +444,7 @@ function App() {
                             onClose={() => setShowHelpDialog(false)}
                         />
                     }
+
                     {
                         showSettingsDialog && <SettingsDialog
                             key="settings"
@@ -482,6 +473,15 @@ function App() {
                             setShowLobbyScreen={() => setShowLobbyScreen(false)}
                             setIsGameActive={() => setIsGameActive(true)}
                             code={code}
+                        />
+                    }
+
+                    {toastType &&
+                        <Toast
+                            type={toastType}
+                            answer={answer}
+                            currentRowIndex={currentRowIndex}
+                            onClose={() => setToastType(null)}
                         />
                     }
                 </AnimatePresence>

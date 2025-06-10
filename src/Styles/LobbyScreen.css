@@ -34,7 +34,7 @@
     margin: 0.65rem 0;
 }
 
-p.game-id {
+p.help-text {
     display: flex;
     flex-direction: row;
     font-weight: bold;
@@ -45,7 +45,7 @@ p.game-id {
     align-items: center;
 }
 
-.copy-id-btn {
+.help-btn {
     border: none;
     background: none;
     text-decoration: underline;
@@ -54,14 +54,6 @@ p.game-id {
     justify-content: center;
     align-items: center;
     gap: 4px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.refresh-btn {
-    border: none;
-    background: none;
-    text-decoration: underline;
     font-size: 16px;
     cursor: pointer;
 }

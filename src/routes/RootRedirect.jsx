@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import "../Styles/RootRedirect.css"
 
 function RootRedirect() {
     const ANS_SIZE = 5;
@@ -44,7 +45,7 @@ function RootRedirect() {
     }, [nav]);
 
     return(
-        <p style={{ textAlign: 'center' }}>Loading game…</p>
+        <div className="loading-screen"><span>Loading game…</span></div>
     );
 }
 

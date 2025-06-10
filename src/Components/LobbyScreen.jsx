@@ -1,18 +1,28 @@
 import WordleLogo from './WordleLogo.jsx';
 import Footer from './Footer.jsx';
+import Toast from './Toast.jsx';
 import '../Styles/LobbyScreen.css'
 import { useState } from 'react';
 import { MdOutlineContentCopy } from "react-icons/md";
-import { motion } from "motion/react";
+import { TbReload } from "react-icons/tb";
+import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 function LobbyScreen({setShowLobbyScreen, setIsGameActive, code}) {
-    const [showCopiedLinkToast, setShowCopiedLinkToast] = useState(false);
+    const location = useLocation();
+    const [lobbyToastType, setLobbyToastType] = useState("");
     const navigate = useNavigate();
 
     function copyGameLink() {
         navigator.clipboard.writeText(window.location.href).then(() => {
-            setShowCopiedLinkToast(true);
+            setLobbyToastType("copyGameLink");
+        });
+    }
+
+    function copyGameID() {
+        navigator.clipboard.writeText(location.pathname.slice(0,)).then(() => {
+            setLobbyToastType("copyGameID");
         });
     }
 
@@ -31,7 +41,14 @@ function LobbyScreen({setShowLobbyScreen, setIsGameActive, code}) {
             exit={{ opacity: 0, pointerEvents: 'none' }}
             transition={{ duration: 0.2, ease: "linear" }}
         >
-            { showCopiedLinkToast && <div className="copy-link-toast">Copied game link to clipboard!</div> }
+            <AnimatePresence>
+                { lobbyToastType &&
+                    <Toast
+                        type={lobbyToastType}
+                        onClose={() => setLobbyToastType(null)}
+                    />
+                }
+            </AnimatePresence>
 
             <motion.div
                 className="lobby-content"
@@ -51,8 +68,8 @@ function LobbyScreen({setShowLobbyScreen, setIsGameActive, code}) {
                     <button className="play-btn" onClick={startGame}>Play</button>
                 </div>
 
-                <p className="game-id">Game ID: <button className="copy-id-btn">{code} <MdOutlineContentCopy /></button></p>
-                <p>Already played this puzzle? <button className="refresh-btn" onClick={reload}>Try a new one</button></p>
+                <p className="help-text">Game ID: <button className="help-btn" onClick={copyGameID}>{code} <MdOutlineContentCopy /></button></p>
+                <p className="help-text">Already played this puzzle? <button className="help-btn" onClick={reload}>Try a new one <TbReload /></button></p>
             </motion.div>
 
             <Footer lobbyFooter={true} />

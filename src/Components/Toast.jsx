@@ -1,21 +1,18 @@
 import '../Styles/Toast.css';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { motion } from "motion/react";
 
-function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration = 2000, exitMs = 300}) {
-    const [exiting, setExiting] = useState(false);
-
+function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration = 2000}) {
+    const isDark = ["copyGameID", "copyGameLink"].includes(type);
     useEffect(() => {
-        const exitTimer = setTimeout(() => setExiting(true), duration - exitMs);
-
         const killTimer = setTimeout(() => {
             onClose();
         }, duration);
 
         return () => {
-        clearTimeout(exitTimer);
         clearTimeout(killTimer);
         };
-    }, [duration, exitMs, onClose]);
+    }, [duration, onClose]);
 
     function getMessage() {
         if (type === "word-dne") {
@@ -37,13 +34,23 @@ function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration
         } else if (type.includes("hardMode")) {
             let missingLetter = type.split("_")[1].toUpperCase();
             return `Guess must contain ${missingLetter}`;
+        } else if (type.includes("copyGameID")) {
+            return "Copied game ID to clipboard!"
+        } else if (type.includes("copyGameLink")) {
+            return "Copied game link to clipboard!"
         }
     }
 
     return (
-        <span className={`toast prevent-select ${exiting ? 'toast--exit' : ''}`}>
+        <motion.span
+            className={`toast prevent-select ${isDark ? "dark" : ""}`}
+            initial={{ opacity: 0, transform: 'translateY(1.5rem)' }}
+            animate={{ opacity: 1, transform: 'translateY(0)' }}
+            exit={{ opacity: 0, transform: 'translateY(1.5rem)' }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+        >
             {getMessage()}
-        </span>
+        </motion.span>
     );
 }
 

@@ -1,0 +1,17 @@
+div.loading-screen {
+    text-align: center;
+    font-family: "Sanchez", serif;
+    font-size: 32px;
+    font-weight: bold;
+    background-color: #e3e3e1;
+    width: 100vw;
+    color: black;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
