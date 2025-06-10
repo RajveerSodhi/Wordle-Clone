@@ -426,6 +426,7 @@ function App() {
                             currentRowIndex={currentRowIndex}
                             answer={answer}
                             restartGameFn={restartGame}
+                            setToastType={setToastType}
                             key="end"
                         />
                     }
@@ -473,6 +474,7 @@ function App() {
                             key="lobby"
                             setShowLobbyScreen={() => setShowLobbyScreen(false)}
                             setIsGameActive={() => setIsGameActive(true)}
+                            setToastType={setToastType}
                             code={code}
                         />
                     }

@@ -2,16 +2,12 @@ import '../Styles/GameEndOverlay.css';
 import { IoShareSocialOutline, IoPlayOutline } from "react-icons/io5";
 import { ImCross } from "react-icons/im";
 import { MdOutlineStarPurple500, MdOutlineContentCopy } from "react-icons/md";
-import { useState } from 'react';
-import { motion, AnimatePresence } from "motion/react";
-import Toast from './Toast';
+import { motion } from "motion/react";
 
-function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, restartGameFn}) {
-    const [gameEndToastType, setGameEndToastType] = useState("");
-
+function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, restartGameFn, setToastType}) {
     function copyGameLink() {
         navigator.clipboard.writeText(window.location.href).then(() => {
-            setGameEndToastType("gameEnd-copyGameLink");
+            setToastType("gameEnd-copyGameLink");
         });
     }
     
@@ -41,7 +37,7 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, res
         result = result.trim();
 
         navigator.clipboard.writeText(result).then(() => {
-            setGameEndToastType("gameEnd-copyGameResult");
+            setToastType("gameEnd-copyGameResult");
         });
     }
 
@@ -70,15 +66,6 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, res
                     </span>
                     <h1>{ didUserWin ? "Congratulations!" : "So Close!" }</h1>
                 </div>
-
-                <AnimatePresence>
-                { gameEndToastType &&
-                    <Toast
-                        type={gameEndToastType}
-                        onClose={() => setGameEndToastType(null)}
-                    />
-                }
-            </AnimatePresence>
 
                 <div className="main-btn-container">
                     <button className="main-btn" onClick={() => getSharableResult(rows, didUserWin)}>

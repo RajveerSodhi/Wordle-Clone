@@ -3,12 +3,43 @@ import { ImCross } from "react-icons/im";
 import { MdOutlineContentCopy } from "react-icons/md";
 import { motion } from "motion/react";
 import BackgroundOverlay from './BackgroundOverlay';
-import Toast from "../Components/Toast.jsx"
-// import { useState } from "react";
+import { useState } from "react";
 
 function CreateGameDialog({onClose, setToastType}) {
-    // const [createGameToastType, setCreateGameToastType] = useState("");
+    const [customChars, setCustomChars] = useState(0);
+    const [inputValue, setInputValue] = useState('');
     const gameExamples = ["HBDAY", "BFF", "SCHOOL", "WELCOME", "SWITCH", "RAJVEER", "PRANK", "FISH", "ASH", "SQUIRTLE", "TRUMP", "JAPAN", "ILOVEYOU"];
+
+    const handleInputChange = (event) => {
+        const value = event.target.value;
+        setInputValue(value);
+        setCustomChars(value.length);
+    };
+
+    function getCustomLink() {
+        function encrypt(word) {
+            const chars = "AaBbCcDdEeFfGgHhIiJjKlLkMmOnNoPpQqRrSsTtUuVvWwXxYyZz";
+            let result = "";
+            let shift = word.length;
+            let charsLength = chars.length;
+            
+            for(let char of word.toUpperCase()) {
+                let newCharCode = char.charCodeAt(0) + shift - charsLength;
+                result += chars[newCharCode];
+            }
+            return result;
+        }
+
+        const baseURL = window.location.href.split("/").slice(0, -1).join("/");
+        // const baseURL = "https://wordle.rajveersodhi.com";
+        console.log(inputValue);
+        let code = encrypt(inputValue);
+        let customURL = `${baseURL}/${code}?custom=true`
+
+        navigator.clipboard.writeText(customURL).then(() => {
+            setToastType();
+        });
+    }
 
     return (
         <>
@@ -31,18 +62,18 @@ function CreateGameDialog({onClose, setToastType}) {
                         <div className="custom-game-input-container">
                             <div className="input-inner-container">
                                 <label className="input-label">Enter puzzle answer</label>
-                                <input autoFocus className="input-box" type="text" placeholder={`How about... '${gameExamples[Math.floor(Math.random() * gameExamples.length)].toUpperCase()}'`}/>
+                                <input maxlength="20" autoFocus value={inputValue} onChange={handleInputChange} className="input-box" type="text" placeholder={`How about... '${gameExamples[Math.floor(Math.random() * gameExamples.length)].toUpperCase()}'`}/>
                             </div>
 
                             <div className="char-limit-desc">
                                 <span className="min-lim">3 ≤</span>
-                                <span className="curr-chars">5</span>
+                                <span className={`curr-chars ${customChars >= 3 && customChars <= 8 ? "" : "show-invalid"}`}>{customChars}</span>
                                 <span className="max-lim">≤ 8</span>
                             </div>
                         </div>
                 </div>
 
-                <button onClick={() => setToastType()} className="main-btn copy-custom-link-btn">Copy Custom Link <MdOutlineContentCopy className="btn-icon"/></button>
+                <button onClick={getCustomLink} disabled={!(customChars >= 3 && customChars <= 8)} className="main-btn copy-custom-link-btn">Copy Custom Link <MdOutlineContentCopy className="btn-icon"/></button>
             </motion.div>
         </>
     );

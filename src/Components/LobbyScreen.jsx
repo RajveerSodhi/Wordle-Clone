@@ -1,28 +1,25 @@
 import WordleLogo from './WordleLogo.jsx';
 import Footer from './Footer.jsx';
-import Toast from './Toast.jsx';
 import '../Styles/LobbyScreen.css'
-import { useState } from 'react';
 import { MdOutlineContentCopy } from "react-icons/md";
 import { TbReload } from "react-icons/tb";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
 
-function LobbyScreen({setShowLobbyScreen, setIsGameActive, code}) {
+function LobbyScreen({setShowLobbyScreen, setIsGameActive, code, setToastType}) {
     const location = useLocation();
-    const [lobbyToastType, setLobbyToastType] = useState("");
     const navigate = useNavigate();
 
     function copyGameLink() {
         navigator.clipboard.writeText(window.location.href).then(() => {
-            setLobbyToastType("lobby-copyGameLink");
+            setToastType("lobby-copyGameLink");
         });
     }
 
     function copyGameID() {
         navigator.clipboard.writeText(location.pathname.slice(0,)).then(() => {
-            setLobbyToastType("lobby-copyGameID");
+            setToastType("lobby-copyGameID");
         });
     }
 
@@ -41,15 +38,6 @@ function LobbyScreen({setShowLobbyScreen, setIsGameActive, code}) {
             exit={{ opacity: 0, pointerEvents: 'none' }}
             transition={{ duration: 0.2, ease: "linear" }}
         >
-            <AnimatePresence>
-                { lobbyToastType &&
-                    <Toast
-                        type={lobbyToastType}
-                        onClose={() => setLobbyToastType(null)}
-                    />
-                }
-            </AnimatePresence>
-
             <motion.div
                 className="lobby-content"
                 initial={{ opacity: 0, transform: 'translateY(1.5rem)' }}

@@ -1,5 +1,5 @@
 .custom-game-input-container {
-    margin-top: 1.5rem;
+    margin-top: 2rem;
 }
 
 .input-inner-container {
@@ -44,11 +44,29 @@
 .char-limit-desc .min-lim,
 .char-limit-desc .max-lim {
     font-size: 14px;
-    color: #7e7e7e;
+    color: #9f9f9f;
     margin-top: 4px;
     font-weight: 400;
 }
 
 .copy-custom-link-btn {
     margin-top: 1.5rem;
+}
+
+.char-limit-desc .curr-chars {
+    transition: font-size 0.2s ease-in-out;
+}
+
+.curr-chars.show-invalid {
+    color: #ff6b59;
+    font-size: 140%;
+}
+
+.main-btn {
+    transition: background-color 0.2s ease-in-out;
+}
+
+.main-btn:disabled {
+    background-color: #9f9f9f;
+    cursor:auto;
 }
