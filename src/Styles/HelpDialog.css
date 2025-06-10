@@ -144,14 +144,14 @@ ul {
 
     .note {
         text-align: start;
-        line-height: 1.2rem;
+        line-height: 1.1rem;
     }
 
     ul {
         margin: 0;
         padding: 0 0 0 1rem;
         text-align: start;
-        line-height: 1.2rem;
+        line-height: 1.1rem;
     }
 
     .back-btn-icon {
@@ -169,10 +169,14 @@ ul {
     }
 
     .subtitle {
-        font-size: 14px;
+        font-size: 16px;
     }
 
     h2 {
-        font-size: 20px;
+        font-size: 22px;
+    }
+
+    p {
+        font-size: 14px;
     }
 }

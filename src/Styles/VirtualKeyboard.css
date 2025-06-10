@@ -71,4 +71,8 @@
     .key.delete {
         font-size: 20px;
     }
+
+    .keyboard {
+        padding: 0;
+    }
 }
