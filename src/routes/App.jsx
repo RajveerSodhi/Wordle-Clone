@@ -424,7 +424,7 @@ function App() {
                             didUserWin={didUserWin}
                             onClose={() => setShowEndScreen(false)}
                             currentRowIndex={currentRowIndex}
-                            answer={answer}
+                            code={code}
                             restartGameFn={restartGame}
                             setToastType={setToastType}
                             key="end"
@@ -443,6 +443,8 @@ function App() {
                         showHelpDialog && <HelpDialog
                             key="help"
                             onClose={() => setShowHelpDialog(false)}
+                            MAX_GUESSES={MAX_GUESSES}
+                            ANS_LENGTH={ANS_SIZE}
                         />
                     }
 
@@ -476,6 +478,8 @@ function App() {
                             setIsGameActive={() => setIsGameActive(true)}
                             setToastType={setToastType}
                             code={code}
+                            MAX_GUESSES={MAX_GUESSES}
+                            ANS_LENGTH={ANS_SIZE}
                         />
                     }
 

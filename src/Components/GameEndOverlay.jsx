@@ -4,7 +4,7 @@ import { ImCross } from "react-icons/im";
 import { MdOutlineStarPurple500, MdOutlineContentCopy } from "react-icons/md";
 import { motion } from "motion/react";
 
-function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, restartGameFn, setToastType}) {
+function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, code, restartGameFn, setToastType}) {
     function copyGameLink() {
         navigator.clipboard.writeText(window.location.href).then(() => {
             setToastType("gameEnd-copyGameLink");
@@ -16,7 +16,7 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, answer, res
         let ans_length = rows[0].length;
         let result = "";
 
-        result += `Wordle '${answer.toUpperCase()}' ${didUserWin ? currentRowIndex : "X"}/${max_tries}\n\n`;
+        result += `Wordle '${code.toUpperCase()}' ${didUserWin ? currentRowIndex : "X"}/${max_tries}\n\n`;
 
         for (let i = 0; i < max_tries; i++) {
             for (let j = 0; j < ans_length; j++) {

@@ -7,7 +7,7 @@ import { motion } from "motion/react";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
 
-function LobbyScreen({setShowLobbyScreen, setIsGameActive, code, setToastType}) {
+function LobbyScreen({setShowLobbyScreen, setIsGameActive, code, setToastType, MAX_GUESSES, ANS_LENGTH}) {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -47,8 +47,8 @@ function LobbyScreen({setShowLobbyScreen, setIsGameActive, code, setToastType}) 
                 <WordleLogo />
 
                 <h1>Wordle</h1>
-                <h3>Get 6 chances to</h3>
-                <h3>guess a 5-letter word.</h3>
+                <h3>Get {MAX_GUESSES} chances to</h3>
+                <h3>guess a {ANS_LENGTH}-letter word.</h3>
 
                 <div className="lobby-btns-container">
                     <button className="share-btn" onClick={copyGameLink}>Create Game</button>

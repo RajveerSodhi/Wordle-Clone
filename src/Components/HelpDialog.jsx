@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { ImCross } from "react-icons/im";
 import BackgroundOverlay from './BackgroundOverlay';
 
-function HelpDialog({ onClose }) {
+function HelpDialog({ onClose, MAX_GUESSES, ANS_LENGTH }) {
     return (
         <>
             <BackgroundOverlay />
@@ -19,10 +19,10 @@ function HelpDialog({ onClose }) {
                     <button className="back-btn" onClick={() => {onClose()}}><ImCross className="back-btn-icon" /></button>
                 </div>
                 <h2>How To Play</h2>
-                <p className="subtitle"> Guess the Wordle in 6 tries.</p>
+                <p className="subtitle"> Guess the Wordle in {MAX_GUESSES} tries.</p>
 
                 <ul>
-                    <li>Each guess must be a valid 5-letter word.</li>
+                    <li>Each guess must be a valid {ANS_LENGTH}-letter word.</li>
                     <li>The color of the tiles will change to show how close your guess was to the word.</li>
                 </ul>
 
