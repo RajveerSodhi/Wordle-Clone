@@ -55,8 +55,21 @@
     font-size: 22px;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 780px) {
     .key {
-        width: 36px;
+        width: 34px;
+        height: 48px;
+    }
+
+    .key.spl-key {
+        width: 48px;
+    }
+
+    .key.enter {
+        font-size: 10px;
+    }
+
+    .key.delete {
+        font-size: 20px;
     }
 }

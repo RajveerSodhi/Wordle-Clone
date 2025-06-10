@@ -133,8 +133,17 @@ p.addn-info-text {
 	}
 }
 
-@media only screen and (max-width: 780px) {
-    /* .lobby-btns-container {
-        flex-
-    } */
+@media only screen and (max-width: 600px) {
+    .lobby-content h3 { 
+        font-size: 1.8rem;
+    }
+
+    .lobby-content h1 {
+        font-size: 38px;
+        margin: 0.6rem 0;
+    }
+
+    p.addn-info-text {
+        font-size: 14px;
+    }
 }

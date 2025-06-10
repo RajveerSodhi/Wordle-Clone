@@ -32,7 +32,6 @@ function CreateGameDialog({onClose, setToastType}) {
 
         const baseURL = window.location.href.split("/").slice(0, -1).join("/");
         // const baseURL = "https://wordle.rajveersodhi.com";
-        console.log(inputValue);
         let code = encrypt(inputValue);
         let customURL = `${baseURL}/${code}?custom=true`
 
@@ -46,7 +45,7 @@ function CreateGameDialog({onClose, setToastType}) {
             <BackgroundOverlay isCreateGameDialog = {true} />
 
             <motion.div
-                className="dialog centered center-content"
+                className="dialog centered center-content moved-up"
                 initial={{opacity: 0, transform: "translateY(2rem)", pointerEvents: 'none'}}
                 animate={{opacity: 1, transform: "translateY(0)", pointerEvents: 'all'}}
                 exit={{ opacity: 0, transform: "translateY(2rem)", pointerEvents: 'none' }}
