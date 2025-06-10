@@ -45,4 +45,9 @@ a:hover {
         flex-direction: column;
         gap: 4px;
     }
+
+    footer {
+        margin-top: 1rem;
+        font-size: 0.6rem;
+    }
 }
