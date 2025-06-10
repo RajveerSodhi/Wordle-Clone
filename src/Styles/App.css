@@ -163,8 +163,8 @@ main {
 
 @media only screen and (max-width: 780px) {
     .guess {
-        width: 52px;
-        height: 52px;
-        font-size: 2rem;
+        width: 56px;
+        height: 56px;
+        font-size: 2.1rem;
     }
 }

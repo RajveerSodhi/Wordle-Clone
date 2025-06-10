@@ -134,7 +134,8 @@ ul {
 
 @media only screen and (max-width: 600px) {
     .dialog {
-        max-width: 520px;
+        max-width: 500px;
+        width: 90%;
     }
 
     .guess-eg span {
