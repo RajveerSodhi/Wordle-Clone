@@ -159,7 +159,7 @@ ul {
     }
 
     .centered {
-        top: 15%;
+        top: 5%;
     }
 
     .guess-eg span {
@@ -176,7 +176,8 @@ ul {
         font-size: 22px;
     }
 
-    p {
+    p,
+    li {
         font-size: 14px;
     }
 }
