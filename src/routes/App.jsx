@@ -75,8 +75,6 @@ function App() {
         })();
     }, [answer]);
 
-    console.log(answer);
-
     // define constants
     const keyRows = [
         ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],

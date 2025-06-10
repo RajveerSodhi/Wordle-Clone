@@ -19,10 +19,7 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, code, isCus
         result += `Wordle '${code.toUpperCase()}' ${isCustom ? "(Custom) " : ""} ${didUserWin ? currentRowIndex : "X"}/${max_tries}\n\n`;
 
         for (let i = 0; i < max_tries; i++) {
-            if (rows[i][0].char === '') {
-                console.log("skip row");
-                continue;
-            }
+            if (rows[i][0].char === '') continue;
             for (let j = 0; j < ans_length; j++) {
                 let guess = rows[i][j]
                 let guess_match = guess.match
