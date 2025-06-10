@@ -68,8 +68,8 @@ function LobbyScreen({setShowLobbyScreen, setIsGameActive, code}) {
                     <button className="play-btn" onClick={startGame}>Play</button>
                 </div>
 
-                <p className="help-text">Game ID: <button className="help-btn" onClick={copyGameID}>{code} <MdOutlineContentCopy /></button></p>
-                <p className="help-text">Already played this puzzle? <button className="help-btn" onClick={reload}>Try a new one <TbReload /></button></p>
+                <p className="addn-info-text">Game ID: <button className="addn-info-btn" onClick={copyGameID}>{code} <MdOutlineContentCopy /></button></p>
+                <p className="addn-info-text">Already played this puzzle? <button className="addn-info-btn" onClick={reload}>Try a new one <TbReload /></button></p>
             </motion.div>
 
             <Footer lobbyFooter={true} />

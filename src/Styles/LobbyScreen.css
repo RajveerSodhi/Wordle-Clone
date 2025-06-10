@@ -34,7 +34,7 @@
     margin: 0.65rem 0;
 }
 
-p.help-text {
+p.addn-info-text {
     display: flex;
     flex-direction: row;
     font-weight: bold;
@@ -45,7 +45,7 @@ p.help-text {
     align-items: center;
 }
 
-.help-btn {
+.addn-info-btn {
     border: none;
     background: none;
     text-decoration: underline;
