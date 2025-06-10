@@ -11,6 +11,12 @@
     overflow-x: hidden;
 }
 
+button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
 .prevent-select {
     -webkit-user-select: none;
     -ms-user-select: none;
