@@ -135,7 +135,7 @@ ul {
 @media only screen and (max-width: 600px) {
     .dialog {
         max-width: 500px;
-        width: 90%;
+        width: 80%;
     }
 
     .eg p {
@@ -144,7 +144,7 @@ ul {
 
     .note {
         text-align: start;
-        line-height: 1.05rem;
+        line-height: 1.2rem;
     }
 
     ul {
@@ -159,7 +159,7 @@ ul {
     }
 
     .centered {
-        top: 5%;
+        top: 15%;
     }
 
     .guess-eg span {
