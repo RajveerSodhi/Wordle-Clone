@@ -1,21 +1,83 @@
-import './Styles/App.css';
-import './Styles/VirtualKeyboard.css';
+// CSS imports
+import '../Styles/App.css';
+import '../Styles/VirtualKeyboard.css';
+
+// react and motion imports
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate, redirect } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from "motion/react";
+
+// icon imports
 import { LuDelete } from "react-icons/lu";
-import Navbar from './Components/Navbar';
-import Footer from './Components/Footer';
-import GuessBox from './Components/GuessBox';
-import Toast from './Components/Toast';
-import GameEndOverlay from './Components/GameEndOverlay';
-import RestartConfirmDialog from './Components/RestartConfirmDialog';
-import HelpDialog from './Components/HelpDialog';
-import SettingsDialog from './Components/SettingsDialog';
-import CreateDialog from './Components/CreateDialog';
-import LobbyScreen from './Components/LobbyScreen';
+
+// component imports
+import Navbar from '../Components/Navbar';
+import Footer from '../Components/Footer';
+import GuessBox from '../Components/GuessBox';
+import Toast from '../Components/Toast';
+import GameEndOverlay from '../Components/GameEndOverlay';
+import RestartConfirmDialog from '../Components/RestartConfirmDialog';
+import HelpDialog from '../Components/HelpDialog';
+import SettingsDialog from '../Components/SettingsDialog';
+import CreateDialog from '../Components/CreateDialog';
+import LobbyScreen from '../Components/LobbyScreen';
 
 function App() {
+    // get answer from parameters
+    function decrypt(code) {
+        const chars = "AaBbCcDdEeFfGgHhIiJjKlLkMmOnNoPpQqRrSsTtUuVvWwXxYyZz";
+        let result = "";
+        let shift = code.length;
+        let charsLength = chars.length;
+        
+        for (let char of code) {
+            let originalCharCode = chars.indexOf(char) - shift + charsLength;
+            let originalChar = String.fromCharCode(originalCharCode);
+            result += originalChar;
+        }
+        return result;
+    }
+
+    const isValid = useCallback(async (word) => {
+        const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+        try {
+            const res = await fetch(url);
+
+            if (res.status === 404) {
+                return false;
+            }
+            if (!res.ok) {
+                throw new Error(`Dictionary API error ${res.status}`);
+            }
+
+            return true;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    });
+
+    const navigate = useNavigate();
+    const { code } = useParams();
+    const [search] = useSearchParams();
+    const isCustom = search.get('custom') === 'true';
+    const answer = decrypt(code || '');
+
+    useEffect(() => {
+        (async () => {
+            const lengthOk = answer.length <= 8;
+            const regexOk = isCustom ? true : /^[a-z0-9]+$/i.test(answer);
+            const dictOk  =  isCustom ? true : await isValid(answer);
+
+            if (!answer || !lengthOk || !regexOk || !dictOk) {
+            navigate("/", { replace: true });
+            }
+        })();
+    }, [answer]);
+
+    console.log(answer);
+
+    // define constants
     const keyRows = [
         ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
         ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
@@ -26,15 +88,12 @@ function App() {
 
     // state variables
     let [MAX_GUESSES, setMaxGuesses] = useState(6);
-    let [ANS_SIZE, setAnsSize] = useState(5);
-    let [isGameActive, setIsGameActive] = useState(true);
+    let [ANS_SIZE, setAnsSize] = useState(answer.length || 5);
+    let [isGameActive, setIsGameActive] = useState(false);
     let [didUserWin, setDidUserWin] = useState(false);
     let [currentRowIndex, setCurrentRowIndex] = useState(0);
-    let [answer, setAnswer] = useState("")
     let [currentGuess, setCurrentGuess] = useState([]);
     let [rows, setRows] = useState(Array.from({ length: MAX_GUESSES }, () => Array.from({ length: ANS_SIZE }, () => ({ ...blankGuess }))));
-    let [isLoading, setIsLoading] = useState(true);
-    let [fetchError, setFetchError] = useState(null);
     let [toastType, setToastType] = useState(null);
     let [isKeyboardDisabled, setIsKeyboardDisabled] = useState(false);
     let [isHardMode, setIsHardMode] = useState(false);
@@ -48,44 +107,9 @@ function App() {
     let [showCreateDialog, setShowCreateDialog] = useState(false);
     let [isAnimating, setIsAnimating] = useState(false); 
     // let [keys, setKeys] = useState(Array.from({ length: 26 }, () => ({ ...blankKey })))
-
     let enteredWords = useRef(new Map());
-
-    const fetchAnswer = useCallback(async () => {
-        const url = `https://random-word-api.vercel.app/api?words=1&length=${ANS_SIZE}&type=uppercase`;
-        try {
-            // const res = await fetch(url);
-            // if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
-            // const json = await res.json();
-            // setAnswer(json[0]);
-            setAnswer("REACH");
-        } catch (err) {
-            setFetchError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [ANS_SIZE]);
-
+    
     const submitGuess = useCallback(async () => {
-        async function isValid() {
-            const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${currentGuess.join("")}`;
-            try {
-                // const res = await fetch(url);
-
-                // if (res.status === 404) {
-                //     return false;
-                // }
-                // if (!res.ok) {
-                //     throw new Error(`Dictionary API error ${res.status}`);
-                // }
-
-                return true;
-            } catch (err) {
-                setFetchError(err.message)
-                return false;
-            }
-        }
-
         function patchCurrentRow(patchFn) {
             setRows(prev => {
                 const next = prev.map((r, idx) => (idx === currentRowIndex ? [...r] : r));
@@ -100,7 +124,7 @@ function App() {
 
         let isWordValid = enteredWords.current.get(currentGuess.join(""));
         if (isWordValid === undefined) {
-            isWordValid = await isValid();
+            isWordValid = await isValid(currentGuess.join(""));
             enteredWords.current.set(currentGuess.join(""), isWordValid);
         }
 
@@ -191,7 +215,7 @@ function App() {
         }
 
         setCurrentGuess([]);
-    }, [currentGuess, currentRowIndex, guessedLetters, ANS_SIZE, isHardMode, isGameActive, MAX_GUESSES, answer]);
+    }, [currentGuess, currentRowIndex, guessedLetters, ANS_SIZE, isHardMode, isGameActive, MAX_GUESSES, answer, isValid]);
 
     const setCharInput = useCallback((key) => {
         if (!isGameActive || currentGuess.length >= ANS_SIZE) return;
@@ -204,7 +228,7 @@ function App() {
             };
             return prev;
         });
-    }, [currentRowIndex, currentGuess, isGameActive]);
+    }, [currentRowIndex, currentGuess, isGameActive, ANS_SIZE]);
 
     function onScreenCharInput(key) {
         if (!isGameActive) return;
@@ -242,25 +266,7 @@ function App() {
     }
 
     function restartGame() {
-        setUpdateKeyboard(false);
-        setToastType(null);
-        setRows(Array.from({ length: MAX_GUESSES }, () => Array.from({ length: ANS_SIZE }, () => ({ ...blankGuess }))));
-        fetchAnswer();
-        setCurrentGuess([]);
-        setCurrentRowIndex(0);
-        setDidUserWin(false);
-        setIsGameActive(true);
-        setGuessedLetters([]);
-        
-        const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        for (let i in alphabets) {
-            const virtualKey = document.getElementById(`key_${alphabets[i]}`);
-            if (!virtualKey) continue;
-            virtualKey.className = "key prevent-select";
-        }
-
-        setShowRestartConfirmDialog(false);
-        setShowEndScreen(false);
+        navigate("/", {replace: true});
     }
     
     function isChar(key) {
@@ -282,19 +288,29 @@ function App() {
     }, [isGameActive, currentGuess, currentRowIndex]);
 
     useEffect(() => {
-        const blankGuess = { char: "", state: "idle", celebrate: false, match: "incorrect", shake: false };
+        if (showLobbyScreen) return;
+        if (!isGameActive) {
+            setToastType("unavailablePast0");
+            return;
+        }
 
+        // if word length changed, refresh
+        const maxGuessesChanged = MAX_GUESSES !== rows.length;
+        if (!maxGuessesChanged) navigate("/", {replace: true});
+        
+        // else, clear board
+        const blankGuess = { char: "", state: "idle", celebrate: false, match: "incorrect", shake: false };
         setRows(Array.from({ length: MAX_GUESSES }, () =>
             Array.from({ length: ANS_SIZE }, () => ({ ...blankGuess }))
         ));
-        fetchAnswer();
+
         setCurrentGuess([]);
         setCurrentRowIndex(0);
         setGuessedLetters([]);
         setDidUserWin(false);
         setIsGameActive(true);
         enteredWords.current.clear();
-    }, [ANS_SIZE, MAX_GUESSES, fetchAnswer]);
+    }, [ANS_SIZE, MAX_GUESSES]);
 
     useEffect(() => {
         if (!updateKeyboard) return;
@@ -322,10 +338,6 @@ function App() {
     }, [updateKeyboard, ANS_SIZE, currentRowIndex, rows]);
 
     useEffect(() => {
-        fetchAnswer();
-    }, [fetchAnswer]);
-
-    useEffect(() => {
         function handleKeyDown(e) {
             if (e.metaKey || e.ctrlKey || e.altKey) return;
 
@@ -343,9 +355,6 @@ function App() {
         document.addEventListener("keydown", handleKeyDown)
         return () => document.removeEventListener("keydown", handleKeyDown);
     }, [currentGuess, currentRowIndex, isGameActive,  isKeyboardDisabled, ANS_SIZE, backspaceOnGuess, setCharInput, submitGuess])
-
-    if (isLoading) return <p>Loading word...</p>;
-    if (fetchError) return <p>Error: {fetchError}</p>;
 
     return (
         <>  
@@ -471,6 +480,8 @@ function App() {
                         showLobbyScreen && <LobbyScreen
                             key="lobby"
                             setShowLobbyScreen={() => setShowLobbyScreen(false)}
+                            setIsGameActive={() => setIsGameActive(true)}
+                            code={code}
                         />
                     }
                 </AnimatePresence>

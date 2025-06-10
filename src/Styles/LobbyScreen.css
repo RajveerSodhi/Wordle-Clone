@@ -58,6 +58,14 @@ p.game-id {
     cursor: pointer;
 }
 
+.refresh-btn {
+    border: none;
+    background: none;
+    text-decoration: underline;
+    font-size: 16px;
+    cursor: pointer;
+}
+
 .lobby-btns-container .play-btn {
     background-color: black;
     color: white;

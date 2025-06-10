@@ -24,7 +24,7 @@ function SettingsDialog({ onClose, max_guesses, ans_size, setAnsSize, setMaxGues
                 <section className="setting">
                     <div className="setting-name-desc-container">
                         <p className="setting-name">Hard Mode</p>
-                        <p className="setting-desc">Any revealed hints must be used in subsequent guesses</p>
+                        <p className="setting-desc">Any revealed hints must be used in subsequent guesses.</p>
                     </div>
                     <label className="switch">
                         <input type="checkbox" checked={isHardMode} onChange={(e) => setIsHardMode(e.target.checked)}/>
@@ -37,7 +37,7 @@ function SettingsDialog({ onClose, max_guesses, ans_size, setAnsSize, setMaxGues
                 <section className="setting">
                     <div className="setting-name-desc-container">
                         <p className="setting-name">Word Length</p>
-                        <p className="setting-desc">Change the number of letters to be guessed</p>
+                        <p className="setting-desc">Change the number of letters to be guessed. A new word will be generated.</p>
                     </div>
                     <select name="ans_length" id="ans_length" className="select" value={ans_size.toString()} onChange={(e) => setAnsSize(parseInt(e.target.value))}>
                         <option value="3">3</option>
