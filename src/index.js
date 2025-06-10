@@ -12,6 +12,7 @@ root.render(
     <React.StrictMode>
         <Router>
             <Routes>
+                <Route path="/new" element={<RootRedirect />} />
                 <Route path="/" element={<RootRedirect />} />
                 <Route path="/:code" element={<App />} />
                 {/* <Route path="*" element={<NotFound />} /> */}

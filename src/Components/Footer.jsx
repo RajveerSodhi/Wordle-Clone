@@ -5,9 +5,9 @@ function Footer({lobbyFooter = false}) {
         <footer className={lobbyFooter ? "lobby-footer" : ""}>
             <ul>
                 <li>Wordle Clone by <a href="https://www.rajveersodhi.com" target = "_blank" rel="noreferrer">Rajveer Sodhi</a></li>
-                <li>|</li>
+                <li className="footer-divider">|</li>
                 <li>Dedicated to my dad for getting me hooked!</li>
-                <li>|</li>
+                <li className="footer-divider">|</li>
                 <li><a href="https://www.nytimes.com/games/wordle/index.html" target = "_blank" rel="noreferrer">Visit Wordle</a></li>
             </ul>
         </footer>

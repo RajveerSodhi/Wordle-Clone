@@ -2,6 +2,7 @@ footer ul {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    flex-wrap: wrap;
     align-items: center;
     list-style: none;
     font-size: 0.75rem;
@@ -32,4 +33,15 @@ a:hover {
 
 .lobby-footer a {
     color: black;
+}
+
+@media only screen and (max-width: 600px) {
+    .footer-divider {
+        display: none;
+    }
+
+    footer ul {
+        flex-direction: column;
+        gap: 4px;
+    }
 }

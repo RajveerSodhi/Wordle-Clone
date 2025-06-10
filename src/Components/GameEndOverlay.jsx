@@ -4,7 +4,7 @@ import { ImCross } from "react-icons/im";
 import { MdOutlineStarPurple500, MdOutlineContentCopy } from "react-icons/md";
 import { motion } from "motion/react";
 
-function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, code, restartGameFn, setToastType}) {
+function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, code, isCustom, restartGameFn, setToastType}) {
     function copyGameLink() {
         navigator.clipboard.writeText(window.location.href).then(() => {
             setToastType("gameEnd-copyGameLink");
@@ -16,9 +16,10 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, code, resta
         let ans_length = rows[0].length;
         let result = "";
 
-        result += `Wordle '${code.toUpperCase()}' ${didUserWin ? currentRowIndex : "X"}/${max_tries}\n\n`;
+        result += `Wordle '${code.toUpperCase()}' ${isCustom ? "(Custom) " : ""} ${didUserWin ? currentRowIndex : "X"}/${max_tries}\n\n`;
 
         for (let i = 0; i < max_tries; i++) {
+            if (rows[i][0] === '') continue;
             for (let j = 0; j < ans_length; j++) {
                 let guess = rows[i][j]
                 let guess_match = guess.match
@@ -34,6 +35,9 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, code, resta
             }
             result += "\n";
         }
+
+        result += `Try it yourself!\n${window.location.href}`;
+
         result = result.trim();
 
         navigator.clipboard.writeText(result).then(() => {
@@ -68,6 +72,10 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, code, resta
                 </div>
 
                 <div className="main-btn-container">
+                    {/* <button className="main-btn" onClick={() => getSharableResult(rows, didUserWin)}>
+                        Create Game <IoShareSocialOutline className="btn-icon" />
+                    </button> */}
+
                     <button className="main-btn" onClick={() => getSharableResult(rows, didUserWin)}>
                         Share Results <IoShareSocialOutline className="btn-icon" />
                     </button>
@@ -76,7 +84,7 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, code, resta
                         Play Again <IoPlayOutline className="btn-icon" />
                     </button>
                 </div>
-                <p className="addn-info-text light">Game ID: <button className="addn-info-btn light" onClick={copyGameLink}>Share this puzzle <MdOutlineContentCopy /></button></p>
+                <p className="addn-info-text light"><button className="addn-info-btn light" onClick={copyGameLink}>Share this puzzle <MdOutlineContentCopy /></button></p>
             </motion.section>
         </motion.div>
     );

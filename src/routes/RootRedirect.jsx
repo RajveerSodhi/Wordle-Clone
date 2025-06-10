@@ -1,10 +1,11 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import "../Styles/RootRedirect.css"
 
 function RootRedirect() {
-    const ANS_SIZE = 5;
     const nav = useNavigate();
+    const [searchParams] = useSearchParams();
+    const ANS_SIZE = parseInt(searchParams.get('length')) || 5;
 
     function encrypt(word) {
         const chars = "AaBbCcDdEeFfGgHhIiJjKlLkMmOnNoPpQqRrSsTtUuVvWwXxYyZz";

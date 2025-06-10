@@ -8,7 +8,7 @@ import { useState } from "react";
 function CreateGameDialog({onClose, setToastType}) {
     const [customChars, setCustomChars] = useState(0);
     const [inputValue, setInputValue] = useState('');
-    const gameExamples = ["HBDAY", "BFF", "SCHOOL", "WELCOME", "SWITCH", "RAJVEER", "PRANK", "FISH", "ASH", "SQUIRTLE", "TRUMP", "JAPAN", "ILOVEYOU"];
+    const gameExamples = ["HBDAY", "BFF", "SCHOOL", "POTTER", "HOGWARTS", "WELCOME", "SWITCH", "RAJVEER", "PRANK", "FISH", "ASH", "SQUIRTLE", "TRUMP", "JAPAN", "ILOVEYOU"];
 
     const handleInputChange = (event) => {
         const value = event.target.value;
@@ -62,7 +62,7 @@ function CreateGameDialog({onClose, setToastType}) {
                         <div className="custom-game-input-container">
                             <div className="input-inner-container">
                                 <label className="input-label">Enter puzzle answer</label>
-                                <input maxlength="20" autoFocus value={inputValue} onChange={handleInputChange} className="input-box" type="text" placeholder={`How about... '${gameExamples[Math.floor(Math.random() * gameExamples.length)].toUpperCase()}'`}/>
+                                <input maxLength="20" autoFocus value={inputValue} onChange={handleInputChange} className="input-box" type="text" placeholder={`How about... '${gameExamples[Math.floor(Math.random() * gameExamples.length)].toUpperCase()}'`}/>
                             </div>
 
                             <div className="char-limit-desc">
@@ -73,7 +73,7 @@ function CreateGameDialog({onClose, setToastType}) {
                         </div>
                 </div>
 
-                <button onClick={getCustomLink} disabled={!(customChars >= 3 && customChars <= 8)} className="main-btn copy-custom-link-btn">Copy Custom Link <MdOutlineContentCopy className="btn-icon"/></button>
+                <button onClick={getCustomLink} disabled={!(customChars >= 3 && customChars <= 8 && /^[a-z]+$/i.test(inputValue))} className="main-btn copy-custom-link-btn">Copy Custom Link <MdOutlineContentCopy className="btn-icon"/></button>
             </motion.div>
         </>
     );

@@ -57,3 +57,13 @@ nav {
     opacity: 0.5;
     pointer-events: none;
 }
+
+@media only screen and (max-width: 780px) {
+    .title {
+        display: none;
+    }
+
+    nav {
+        justify-content: center;
+    }
+}

@@ -66,7 +66,7 @@ function App() {
     useEffect(() => {
         (async () => {
             const lengthOk = answer.length <= 8;
-            const regexOk = isCustom ? true : /^[a-z0-9]+$/i.test(answer);
+            const regexOk = isCustom ? true : /^[a-z]+$/i.test(answer);
             const dictOk  =  isCustom ? true : await isValid(answer);
 
             if (!answer || !lengthOk || !regexOk || !dictOk) {
@@ -122,20 +122,22 @@ function App() {
 
         setIsAnimating(true);
         let inputWord = currentGuess.join("").toUpperCase();
-        let isWordValid = enteredWords.current.get(inputWord);
-        if (isWordValid === undefined) {
-            isWordValid = await isValid(inputWord);
-            enteredWords.current.set(inputWord, isWordValid);
-        }
+        if (inputWord !== answer && !isCustom) {
+            let isWordValid = enteredWords.current.get(inputWord);
+            if (isWordValid === undefined) {
+                isWordValid = await isValid(inputWord);
+                enteredWords.current.set(inputWord, isWordValid);
+            }
 
-        if (!isWordValid && inputWord.toUpperCase) {
-            setToastType("word-dne");
-            patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
-            await sleep(500);
-            patchCurrentRow(cell => ({ ...cell, shake: false }));
-            setIsAnimating(false);
+            if (!isWordValid && inputWord.toUpperCase) {
+                setToastType("word-dne");
+                patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
+                await sleep(500);
+                patchCurrentRow(cell => ({ ...cell, shake: false }));
+                setIsAnimating(false);
 
-            return;
+                return;
+            }
         }
 
         if (isHardMode) {
@@ -295,7 +297,7 @@ function App() {
 
         // if word length changed, refresh
         const maxGuessesChanged = MAX_GUESSES !== rows.length;
-        if (!maxGuessesChanged) navigate("/", {replace: true});
+        if (!maxGuessesChanged) navigate(`/new?length=${ANS_SIZE}`, { replace: true });
         
         // else, clear board
         const blankGuess = { char: "", state: "idle", celebrate: false, match: "incorrect", shake: false };
@@ -425,6 +427,7 @@ function App() {
                             onClose={() => setShowEndScreen(false)}
                             currentRowIndex={currentRowIndex}
                             code={code}
+                            isCustom = {isCustom}
                             restartGameFn={restartGame}
                             setToastType={setToastType}
                             key="end"
@@ -464,22 +467,24 @@ function App() {
                     }
 
                     {
-                        showCreateGameDialog && <CreateGameDialog
-                            key="create"
-                            onClose={() => setShowCreateGameDialog(false)}
-                            setToastType={() => setToastType("copyCustomLink")}
-                        />
-                    }
-
-                    {
                         showLobbyScreen && <LobbyScreen
                             key="lobby"
+                            setShowCreateGameDialog={setShowCreateGameDialog}
                             setShowLobbyScreen={() => setShowLobbyScreen(false)}
                             setIsGameActive={() => setIsGameActive(true)}
                             setToastType={setToastType}
                             code={code}
+                            isCustom={isCustom}
                             MAX_GUESSES={MAX_GUESSES}
                             ANS_LENGTH={ANS_SIZE}
+                        />
+                    }
+
+                    {
+                        showCreateGameDialog && <CreateGameDialog
+                            key="create"
+                            onClose={() => setShowCreateGameDialog(false)}
+                            setToastType={() => setToastType("copyCustomLink")}
                         />
                     }
 

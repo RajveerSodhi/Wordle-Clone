@@ -85,6 +85,8 @@ p.addn-info-text {
     gap: 20px;
     align-items: center;
     justify-content: center;
+    flex-wrap: wrap;
+    padding: 0 2rem;
 }
 
 .lobby-btns-container .share-btn {
@@ -129,4 +131,10 @@ p.addn-info-text {
 		opacity: 1;
         top: 15%;
 	}
+}
+
+@media only screen and (max-width: 780px) {
+    /* .lobby-btns-container {
+        flex-
+    } */
 }

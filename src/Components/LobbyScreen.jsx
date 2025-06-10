@@ -7,7 +7,7 @@ import { motion } from "motion/react";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
 
-function LobbyScreen({setShowLobbyScreen, setIsGameActive, code, setToastType, MAX_GUESSES, ANS_LENGTH}) {
+function LobbyScreen({setShowLobbyScreen, setIsGameActive, setShowCreateGameDialog, code, isCustom, setToastType, MAX_GUESSES, ANS_LENGTH}) {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -18,13 +18,15 @@ function LobbyScreen({setShowLobbyScreen, setIsGameActive, code, setToastType, M
     }
 
     function copyGameID() {
-        navigator.clipboard.writeText(location.pathname.slice(0,)).then(() => {
+        let gameId = location.pathname.slice(1,);
+        gameId += isCustom ? "?custom=true" : "";
+        navigator.clipboard.writeText(gameId).then(() => {
             setToastType("lobby-copyGameID");
         });
     }
 
     function reload() {
-        navigate("/", { replace: true });
+        navigate(`/new?length=${ANS_LENGTH}`, { replace: true });
     }
 
     function startGame() {
@@ -51,7 +53,7 @@ function LobbyScreen({setShowLobbyScreen, setIsGameActive, code, setToastType, M
                 <h3>guess a {ANS_LENGTH}-letter word.</h3>
 
                 <div className="lobby-btns-container">
-                    <button className="share-btn" onClick={copyGameLink}>Create Game</button>
+                    <button className="share-btn" onClick={() => setShowCreateGameDialog(true)}>Create Game</button>
                     <button className="share-btn" onClick={copyGameLink}>Share Link</button>
                     <button className="play-btn" onClick={startGame}>Play</button>
                 </div>
