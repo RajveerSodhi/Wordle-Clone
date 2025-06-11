@@ -45,6 +45,10 @@ p.addn-info-text {
     align-items: center;
 }
 
+select {
+    color: black;
+}
+
 .addn-info-btn {
     border: none;
     background: none;
@@ -54,6 +58,7 @@ p.addn-info-text {
     justify-content: center;
     align-items: center;
     gap: 4px;
+    color: black;
     font-size: 16px;
     cursor: pointer;
 }

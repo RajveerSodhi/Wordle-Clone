@@ -51,6 +51,7 @@
 
 .copy-custom-link-btn {
     margin-top: 1.5rem;
+    color: white;
 }
 
 .char-limit-desc .curr-chars {
@@ -63,6 +64,7 @@
 }
 
 .main-btn {
+    color: white;
     transition: background-color 0.2s ease-in-out;
 }
 
