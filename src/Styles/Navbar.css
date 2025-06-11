@@ -73,4 +73,8 @@ nav {
         width: 26px;
         height: 26px;
     }
+
+    .restart-btn {
+    font-size: 20px;
+}
 }
