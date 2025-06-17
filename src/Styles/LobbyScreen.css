@@ -49,6 +49,10 @@ select {
     color: black;
 }
 
+h4 {
+    font-weight: 400;
+}
+
 .addn-info-btn {
     border: none;
     background: none;

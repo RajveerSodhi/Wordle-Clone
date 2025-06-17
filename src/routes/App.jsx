@@ -116,6 +116,8 @@ function App() {
             });
         }
 
+        if (isAnimating) return;
+
         if (!isGameActive || currentGuess.length !== ANS_SIZE) return;
 
         setIsAnimating(true);
@@ -215,7 +217,7 @@ function App() {
         }
 
         setCurrentGuess([]);
-    }, [currentGuess, currentRowIndex, guessedLetters, ANS_SIZE, isHardMode, isGameActive, MAX_GUESSES, answer, isValid]);
+    }, [currentGuess, currentRowIndex, guessedLetters, ANS_SIZE, isHardMode, isAnimating, isGameActive, MAX_GUESSES, answer, isValid]);
 
     const setCharInput = useCallback((key) => {
         if (!isGameActive || currentGuess.length >= ANS_SIZE) return;
@@ -338,6 +340,8 @@ function App() {
 
     useEffect(() => {
         function handleKeyDown(e) {
+            if (isAnimating) return;
+            if (e.repeat) return;
             if (e.metaKey || e.ctrlKey || e.altKey) return;
 
             let key = e.key
@@ -353,7 +357,7 @@ function App() {
         if (!isGameActive || isKeyboardDisabled) return;
         document.addEventListener("keydown", handleKeyDown)
         return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [currentGuess, showCreateGameDialog, currentRowIndex, isGameActive,  isKeyboardDisabled, ANS_SIZE, backspaceOnGuess, setCharInput, submitGuess])
+    }, [currentGuess, showCreateGameDialog, currentRowIndex, isGameActive,  isKeyboardDisabled, ANS_SIZE, isAnimating, backspaceOnGuess, setCharInput, submitGuess])
 
     return (
         <>  
@@ -400,9 +404,9 @@ function App() {
                                             row.map((letter, j) => {
                                                 return (
                                                     <div className={((i === 2 && j === 0) || (i === 2 && j === keyRows[2].length - 1)) ? "keyrow" : ""} key={j}>
-                                                        { (i === 2 && j === 0) && <button className="key spl-key enter prevent-select" onClick={ submitGuess }>ENTER</button> }
+                                                        { (i === 2 && j === 0) && <button className="key spl-key enter prevent-select" disabled={isAnimating} onClick={ submitGuess }>ENTER</button> }
                                                         <button className="key prevent-select" tabIndex="-1" id={`key_${keyRows[i][j].toUpperCase()}`} onMouseDown={(e) => e.preventDefault()} onClick={ () => onScreenCharInput(keyRows[i][j]) }>{letter}</button>
-                                                        { (i === 2 && j === keyRows[2].length - 1) && <button className="key spl-key delete prevent-select" onClick={ backspaceOnGuess }><LuDelete /></button> }
+                                                        { (i === 2 && j === keyRows[2].length - 1) && <button className="key spl-key delete prevent-select" disabled={isAnimating} onClick={ backspaceOnGuess }><LuDelete /></button> }
                                                     </div>
                                                 );
                                             })
