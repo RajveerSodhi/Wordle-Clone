@@ -127,7 +127,6 @@ function App() {
         }
 
         if (isAnimating) return;
-
         if (!isGameActive || currentGuess.length !== ANS_SIZE) return;
 
         setIsAnimating(true);
@@ -151,9 +150,15 @@ function App() {
         }
 
         if (isHardMode) {
-            for (let i of guessedLetters) {
-                if (!currentGuess.includes(i)) {
-                    setToastType(`hardMode_${i}`);
+            for (let guess of guessedLetters) {
+                let guessedChar = guess["char"];
+                let guessedMatch = guess["match"];
+                let guessedPosition = guess["position"];
+
+                if (guessedMatch === "incorrect") continue;
+
+                if (!currentGuess.includes(guessedChar)) {
+                    setToastType(`hardModeInclude_${guessedChar}`);
 
                     patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
                     await sleep(500);
@@ -161,6 +166,20 @@ function App() {
                     setIsAnimating(false);
 
                     return;
+                }
+
+                if (guessedMatch === "correct") {
+                    let currentLetter = currentGuess[guessedPosition];
+                    if (currentLetter !== guessedChar) {
+                        setToastType(`hardModePosition_${guessedChar}_${guessedPosition + 1}`);
+
+                        patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
+                        await sleep(500);
+                        patchCurrentRow(cell => ({ ...cell, shake: false }));
+                        setIsAnimating(false);
+
+                        return;
+                    }
                 }
             }
         }
@@ -170,15 +189,14 @@ function App() {
             let match = "incorrect";
             if (guess === answer[i]) {
                 match = "correct";
-                if (!guessedLetters.includes(guess)) {
-                    setGuessedLetters(prev => [...prev, guess]);
-                }  
             } else if (answer.includes(guess)) {
-                match = "almost-correct";
-                if (!guessedLetters.includes(guess)) {
-                    setGuessedLetters(prev => [...prev, guess]);
-                }                
+                match = "almost-correct";        
             }
+
+            if (!guessedLetters.some(entry => entry.char === guess) || (guessedLetters.some(entry => entry.char === guess && entry.match === "almost-correct") && match === "correct")) {
+                let guessedLettersEntry = {"char": guess, "match": match, "position": i};
+                setGuessedLetters(prev => [...prev, guessedLettersEntry]);
+            } 
 
             setRows(prev => {
                 const newRows = prev.map(row => [...row]);
@@ -227,6 +245,7 @@ function App() {
         }
 
         setCurrentGuess([]);
+        console.log(guessedLetters);
     }, [currentGuess, currentRowIndex, guessedLetters, ANS_SIZE, isHardMode, isAnimating, isGameActive, MAX_GUESSES, answer, isValid]);
 
     const setCharInput = useCallback((key) => {
@@ -496,7 +515,8 @@ function App() {
                         showCreateGameDialog && <CreateGameDialog
                             key="create"
                             onClose={() => setShowCreateGameDialog(false)}
-                            setToastType={() => setToastType("copyCustomLink")}
+                            setToastType={setToastType}
+                            showLobbyScreen={showLobbyScreen}
                         />
                     }
 

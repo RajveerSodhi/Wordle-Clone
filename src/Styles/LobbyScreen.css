@@ -34,6 +34,11 @@
     margin: 0.65rem 0;
 }
 
+.lobby-content h4 {
+    margin: 0.5rem 0;
+    width: 80%;
+}
+
 p.addn-info-text {
     display: flex;
     flex-direction: row;
@@ -154,5 +159,16 @@ h4 {
 
     p.addn-info-text {
         font-size: 14px;
+        margin: 0.35rem 0;
+    }
+
+    .lobby-btns-container {
+        gap: 8px;
+        margin: 1.25rem 0;
+    }
+
+    .lobby-content h3 { 
+        font-size: 1.4rem;
+        margin: 0.05rem 0;
     }
 }

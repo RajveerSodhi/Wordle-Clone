@@ -103,6 +103,10 @@ function SettingsDialog({ onClose, max_guesses, ans_size, setAnsSize, setMaxGues
                         <span className="slider round"></span>
                     </label>
                 </section>
+
+                <hr/>
+
+                <p className="settings-footer"><a href="https://www.nytimes.com/games/wordle/index.html" target = "_blank" rel="noreferrer">Wordle</a> Clone made by <a href="https://www.rajveersodhi.com" target = "_blank" rel="noreferrer">Rajveer Sodhi</a></p>
             </motion.div>
         </>
     );

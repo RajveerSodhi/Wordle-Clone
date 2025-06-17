@@ -12,17 +12,32 @@ function LobbyScreen({setShowLobbyScreen, setIsGameActive, setShowCreateGameDial
     const navigate = useNavigate();
 
     function copyGameLink() {
-        navigator.clipboard.writeText(window.location.href).then(() => {
-            setToastType("lobby-copyGameLink");
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(window.location.href)
+            .then(() => {
+                setToastType("lobby-copyGameLink");
+            }).catch(err => {
+                console.error("Clipboard write failed", err);
+            });
+        } else {
+            setToastType("lobby-copyError");
+        }
     }
 
     function copyGameID() {
         let gameId = location.pathname.slice(1,);
         gameId += isCustom ? "?custom=true" : "";
-        navigator.clipboard.writeText(gameId).then(() => {
-            setToastType("lobby-copyGameID");
-        });
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(gameId)
+            .then(() => {
+                setToastType("lobby-copyGameID");
+            }).catch(err => {
+                console.error("Clipboard write failed", err);
+            });
+        } else {
+            setToastType("lobby-copyError");
+        }
     }
 
     function reload() {
@@ -51,7 +66,8 @@ function LobbyScreen({setShowLobbyScreen, setIsGameActive, setShowCreateGameDial
                 <h1>Wordle</h1>
                 <h3>Get {MAX_GUESSES} chances to</h3>
                 <h3>guess a {ANS_LENGTH}-letter word.</h3>
-                <h4>(Or edit the number of chances and letters in the settings)</h4>
+                
+                <h4>Or edit the number of chances and letters in the settings!</h4>
 
                 <div className="lobby-btns-container">
                     <button className="share-btn" onClick={() => setShowCreateGameDialog(true)}>Create Game</button>

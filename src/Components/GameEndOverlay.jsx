@@ -6,9 +6,16 @@ import { motion } from "motion/react";
 
 function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, code, isCustom, restartGameFn, setToastType}) {
     function copyGameLink() {
-        navigator.clipboard.writeText(window.location.href).then(() => {
-            setToastType("gameEnd-copyGameLink");
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(window.location.href)
+            .then(() => {
+                setToastType("gameEnd-copyGameLink");
+            }).catch(err => {
+                console.error("Clipboard write failed", err);
+            });
+        } else {
+            setToastType("copyError");
+        }
     }
     
     function getSharableResult(rows) {
@@ -40,9 +47,16 @@ function GameEndOverlay({rows, didUserWin, onClose, currentRowIndex, code, isCus
 
         result = result.trim();
 
-        navigator.clipboard.writeText(result).then(() => {
-            setToastType("gameEnd-copyGameResult");
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(result)
+            .then(() => {
+                setToastType("gameEnd-copyGameResult");
+            }).catch(err => {
+                console.error("Clipboard write failed", err);
+            });
+        } else {
+            setToastType("copyError");
+        }
     }
 
     return (

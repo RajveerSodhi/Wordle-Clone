@@ -31,9 +31,15 @@ function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration
             return answer.toUpperCase();
         } else if (type === "unavailablePast0") {
             return "Only available at the start of a game";
-        } else if (type.includes("hardMode")) {
+        } else if (type.includes("hardModeInclude")) {
             let missingLetter = type.split("_")[1].toUpperCase();
             return `Guess must contain ${missingLetter}`;
+        } else if (type.includes("hardModePosition")) {
+            let info =  type.split("_");
+            let misplacedLetter = info[1].toUpperCase();
+            let requiredPosition = info[2];
+            let requiredPositionString = requiredPosition === "1" ? "1st" : requiredPosition === "2" ? "2nd" : requiredPosition === "3" ? "3rd" : (requiredPosition + "th");
+            return `${misplacedLetter} must be in ${requiredPositionString} position`;
         } else if (type.includes("copyGameID")) {
             return "Copied game ID to clipboard!"
         } else if (type.includes("copyGameLink")) {
@@ -42,6 +48,8 @@ function Toast({type, onClose, currentRowIndex = 0, answer = "default", duration
             return "Copied results to clipboard!";
         } else if (type.includes("copyCustomLink")) {
             return "Copied custom game link to clipboard!";
+        } else if (type.includes("copyError")) {
+            return "Copy not supported on this browser";
         }
     }
 

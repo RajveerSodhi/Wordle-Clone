@@ -73,8 +73,27 @@
     cursor:auto;
 }
 
+.dialog-on-lobby {
+    background-color: #e3e3e1;
+    color: black;
+}
+
+.dialog-on-lobby .main-btn:disabled {
+    background-color: #6e6e6e;
+    cursor:auto;
+}
+
+.dialog-on-lobby .char-limit-desc .min-lim,
+.dialog-on-lobby .char-limit-desc .max-lim {
+    color: #6e6e6e;
+}
+
+.dialog-on-lobby .back-btn-icon {
+    color: black;
+}
+
 @media only screen and (max-width: 600px) {
     .moved-up {
-        top: 5%;
+        top: 3%;
     }
 }

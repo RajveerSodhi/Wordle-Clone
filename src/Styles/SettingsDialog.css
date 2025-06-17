@@ -44,6 +44,18 @@
     color: #e0e0e0;
 }
 
+.settings-footer {
+    text-align: start;
+    width: 100%;
+    font-size: 0.75rem;
+    margin: 0.15rem 0;
+}
+
+.settings-footer,
+.settings-footer a {
+    color: #bebebe;
+}
+
 .select {
     background-color: white;
     height: 36px;

@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import BackgroundOverlay from './BackgroundOverlay';
 import { useState } from "react";
 
-function CreateGameDialog({onClose, setToastType}) {
+function CreateGameDialog({onClose, setToastType, showLobbyScreen}) {
     const [customChars, setCustomChars] = useState(0);
     const [inputValue, setInputValue] = useState('');
     const gameExamples = ["HBDAY", "BFF", "SCHOOL", "POTTER", "HOGWARTS", "WELCOME", "SWITCH", "RAJVEER", "PRANK", "FISH", "ASH", "SQUIRTLE", "TRUMP", "JAPAN", "ILOVEYOU"];
@@ -35,9 +35,16 @@ function CreateGameDialog({onClose, setToastType}) {
         let code = encrypt(inputValue);
         let customURL = `${baseURL}/${code}?custom=true`
 
-        navigator.clipboard.writeText(customURL).then(() => {
-            setToastType();
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(customURL)
+            .then(() => {
+                setToastType(`${showLobbyScreen ? "lobby-" : ""}copyCustomLink`);
+            }).catch(err => {
+                console.error("Clipboard write failed", err);
+            });
+        } else {
+            setToastType(`${showLobbyScreen ? "lobby-" : ""}copyError`);
+        }
     }
 
     return (
@@ -45,7 +52,7 @@ function CreateGameDialog({onClose, setToastType}) {
             <BackgroundOverlay isCreateGameDialog = {true} />
 
             <motion.div
-                className="dialog centered center-content moved-up"
+                className={`dialog centered center-content moved-up ${showLobbyScreen ? "dialog-on-lobby" : ""}`}
                 initial={{opacity: 0, transform: "translateY(2rem)", pointerEvents: 'none'}}
                 animate={{opacity: 1, transform: "translateY(0)", pointerEvents: 'all'}}
                 exit={{ opacity: 0, transform: "translateY(2rem)", pointerEvents: 'none' }}
