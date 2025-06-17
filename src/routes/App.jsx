@@ -40,12 +40,17 @@ function App() {
 
     const isValid = useCallback(async (word) => {
         const knownFalseNegatives = ["TOUCH"];
+        const knownFalsePositives = [];
         const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
         try {
             if (knownFalseNegatives.includes(word)) {
                 return true;
             }
-            
+
+            if (knownFalsePositives.includes(word)) {
+                return false;
+            }
+
             const res = await fetch(url);
 
             if (res.status === 404) {
