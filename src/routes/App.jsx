@@ -203,7 +203,7 @@ function App() {
                 const letterIndex = guessedLetters.findIndex(entry => entry.char === guess);
                 let guessedLettersEntry = {"char": guess, "match": match, "position": i};
 
-                if (letterIndex == -1) {
+                if (letterIndex === -1) {
                     return [...prev, guessedLettersEntry];
                 }
 
@@ -268,7 +268,6 @@ function App() {
         }
 
         setCurrentGuess([]);
-        console.log(guessedLetters);
     }, [currentGuess, currentRowIndex, guessedLetters, ANS_SIZE, isHardMode, isAnimating, isGameActive, MAX_GUESSES, answer, isValid]);
 
     const setCharInput = useCallback((key) => {
@@ -439,6 +438,8 @@ function App() {
                                                         char={guess.char}
                                                         celebrate={guess.celebrate}
                                                         shake={guess.shake}
+                                                        ansSize={ANS_SIZE}
+                                                        maxGuesses={MAX_GUESSES}
                                                     />
                                         })
                                     }

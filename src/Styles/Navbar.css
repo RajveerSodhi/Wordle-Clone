@@ -6,9 +6,10 @@ nav {
     align-items: center;
     justify-content: flex-end;
     box-sizing: border-box;
+    position: relative;
 }
 
-.title {
+.main-title {
     margin: 0;
     position: absolute;
     left: 50%;
@@ -59,7 +60,7 @@ nav {
 }
 
 @media only screen and (max-width: 780px) {
-    .title {
+    .main-title {
         display: none;
     }
 

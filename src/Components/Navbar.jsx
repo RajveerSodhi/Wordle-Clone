@@ -8,7 +8,7 @@ import { IoMdHelpCircleOutline } from "react-icons/io";
 function Navbar({ hintBtnFn, statsBtnFn, restartBtnFn, helpBtnFn, settingsBtnFn, createBtnFn, isGameActive, disableRestart }) {
     return(
         <nav>
-            <h1 className="title prevent-select">Wordle Clone</h1>
+            <h1 className="main-title prevent-select">Wordle Clone</h1>
             <span className="nav-elements">
                 <button className="nav-btn" disabled={isGameActive} tabIndex="-1" onMouseDown={(e) => e.preventDefault()} onClick={() => !isGameActive && statsBtnFn()}><BiBarChartAlt2 className="stats-btn" /></button>
                 <button className="nav-btn" disabled={disableRestart} tabIndex="-1" onMouseDown={(e) => e.preventDefault()} onClick={() => restartBtnFn()}><FaRedo className="restart-btn" /></button>

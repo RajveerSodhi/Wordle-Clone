@@ -169,6 +169,60 @@ main {
         font-size: 2.15rem;
     }
 
+    .guess.smaller-x6 {
+        width: 54px;
+        height: 54px;
+        font-size: 2rem;
+    }
+
+    .guess.smaller-x7 {
+        width: 46px;
+        height: 46px;
+        font-size: 1.75rem;
+    }
+
+    .guess.smaller-x8 {
+        width: 42px;
+        height: 42px;
+        font-size: 1.5rem;
+    }
+
+    .guess.smaller-x6y7 {
+        width: 51px;
+        height: 51px;
+        font-size: 1.8rem;
+    }
+
+    .guess.smaller-x8y8 {
+        width: 41px;
+        height: 41px;
+        font-size: 1.45rem;
+    }
+
+    .guess.smaller-x7y8 {
+        width: 42px;
+        height: 42px;
+        font-size: 1.5rem;
+    }
+
+    .guess.smaller-x6y8 {
+        width: 43px;
+        height: 43px;
+        font-size: 1.5rem;
+    }
+
+    .guess.smaller-x5y7 {
+        width: 50px;
+        height: 50px;
+        font-size: 1.75rem;
+    }
+
+    .guess.smaller-x5y8 {
+        width: 42px;
+        height: 42px;
+        font-size: 1.45rem;
+    }
+
     main {
         gap: 0;
     }
