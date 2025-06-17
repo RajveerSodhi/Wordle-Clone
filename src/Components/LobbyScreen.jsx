@@ -51,6 +51,7 @@ function LobbyScreen({setShowLobbyScreen, setIsGameActive, setShowCreateGameDial
                 <h1>Wordle</h1>
                 <h3>Get {MAX_GUESSES} chances to</h3>
                 <h3>guess a {ANS_LENGTH}-letter word.</h3>
+                <h4>(Or edit the number of chances and letters in the settings)</h4>
 
                 <div className="lobby-btns-container">
                     <button className="share-btn" onClick={() => setShowCreateGameDialog(true)}>Create Game</button>
