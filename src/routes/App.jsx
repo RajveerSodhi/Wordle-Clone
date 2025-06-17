@@ -131,7 +131,7 @@ function App() {
 
         setIsAnimating(true);
         let inputWord = currentGuess.join("").toUpperCase();
-        if (inputWord !== answer && !isCustom) {
+        if (inputWord !== answer) {
             let isWordValid = enteredWords.current.get(inputWord);
             if (isWordValid === undefined) {
                 isWordValid = await isValid(inputWord);
@@ -157,29 +157,28 @@ function App() {
 
                 if (guessedMatch === "incorrect") continue;
 
+                let moveInvalid = false;
+
                 if (!currentGuess.includes(guessedChar)) {
                     setToastType(`hardModeInclude_${guessedChar}`);
-
-                    patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
-                    await sleep(500);
-                    patchCurrentRow(cell => ({ ...cell, shake: false }));
-                    setIsAnimating(false);
-
-                    return;
+                    moveInvalid = true;
                 }
 
                 if (guessedMatch === "correct") {
                     let currentLetter = currentGuess[guessedPosition];
                     if (currentLetter !== guessedChar) {
                         setToastType(`hardModePosition_${guessedChar}_${guessedPosition + 1}`);
-
-                        patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
-                        await sleep(500);
-                        patchCurrentRow(cell => ({ ...cell, shake: false }));
-                        setIsAnimating(false);
-
-                        return;
+                        moveInvalid = true;
                     }
+                }
+
+                if (moveInvalid) {
+                    patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
+                    await sleep(500);
+                    patchCurrentRow(cell => ({ ...cell, shake: false }));
+                    setIsAnimating(false);
+
+                    return;
                 }
             }
         }
@@ -190,13 +189,37 @@ function App() {
             if (guess === answer[i]) {
                 match = "correct";
             } else if (answer.includes(guess)) {
-                match = "almost-correct";        
+                let guessCount = currentGuess.filter(g => g.toUpperCase() === guess).length;
+                let answerCount = answer.split("").filter(c => c === guess).length;
+                
+                if (guessCount > answerCount) {
+                    match = "incorrect"
+                } else {
+                    match = "almost-correct";
+                }
             }
 
-            if (!guessedLetters.some(entry => entry.char === guess) || (guessedLetters.some(entry => entry.char === guess && entry.match === "almost-correct") && match === "correct")) {
+            setGuessedLetters(prev => {
+                const letterIndex = guessedLetters.findIndex(entry => entry.char === guess);
                 let guessedLettersEntry = {"char": guess, "match": match, "position": i};
-                setGuessedLetters(prev => [...prev, guessedLettersEntry]);
-            } 
+
+                if (letterIndex == -1) {
+                    return [...prev, guessedLettersEntry];
+                }
+
+                if (prev[letterIndex].match === "almost-correct" && match === "correct") {
+                    let updated = prev;
+                    updated[letterIndex] = { char: guess, match, position: i };
+                    return updated;
+                }
+
+                return prev;
+            });
+
+            // if (!guessedLetters.some(entry => entry.char === guess) || (guessedLetters.some(entry => entry.char === guess && entry.match === "almost-correct") && match === "correct")) {
+            //     let guessedLettersEntry = {"char": guess, "match": match, "position": i};
+            //     setGuessedLetters(prev => [...prev, guessedLettersEntry]);
+            // }
 
             setRows(prev => {
                 const newRows = prev.map(row => [...row]);
