@@ -39,7 +39,7 @@ function App() {
     }
 
     const isValid = useCallback(async (word) => {
-        const knownFalseNegatives = ["TOUCH"];
+        const knownFalseNegatives = ["TOUCH", "MINTY"];
         const knownFalsePositives = [];
         const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
         try {
@@ -71,7 +71,7 @@ function App() {
     const { code } = useParams();
     const [search] = useSearchParams();
     const isCustom = search.get('custom') === 'true';
-    const answer = decrypt(code || '');
+    const answer = decrypt(code || '').toUpperCase();
 
     useEffect(() => {
         (async () => {
@@ -138,7 +138,7 @@ function App() {
                 enteredWords.current.set(inputWord, isWordValid);
             }
 
-            if (!isWordValid && inputWord.toUpperCase) {
+            if (!isWordValid) {
                 setToastType("word-dne");
                 patchCurrentRow(cell => ({ ...cell, state: "highlighted-no-bounce", shake: true }));
                 await sleep(500);
@@ -182,25 +182,49 @@ function App() {
                 }
             }
         }
+        
+        const matchesArray = new Array(ANS_SIZE).fill("incorrect")
+        const answerCounts = {};
+
+        for (const letter of answer.split('')) {
+            if (answerCounts[letter]) {
+                answerCounts[letter]++;
+            } else {
+                answerCounts[letter] = 1
+            }
+        }
 
         for (let i = 0; i < ANS_SIZE; i++) {
             let guess = currentGuess[i].toUpperCase();
-            let match = "incorrect";
             if (guess === answer[i]) {
-                match = "correct";
-            } else if (answer.includes(guess)) {
-                let guessCount = currentGuess.filter(g => g.toUpperCase() === guess).length;
-                let answerCount = answer.split("").filter(c => c === guess).length;
-                
-                if (guessCount > answerCount) {
-                    match = "incorrect"
-                } else {
-                    match = "almost-correct";
-                }
+                matchesArray[i] = "correct";
+                answerCounts[guess]--;
+            }
+        }
+
+        for (let i = 0; i < ANS_SIZE; i++) {
+            let guess = currentGuess[i].toUpperCase();
+            if (matchesArray[i] === "correct") {
+                continue
             }
 
+            // let guessCount = currentGuess.filter(g => g.toUpperCase() === guess).length;
+            // let correctGuessCount = matchesArray.filter(g => g.toUpperCase() === guess).length;
+            // let answerCount = answer.split("").filter(c => c === guess).length;
+
+            if ((answerCounts[guess] ? answerCounts[guess] : 0) <= 0) {
+                continue
+            }
+            matchesArray[i] = "almost-correct";
+            answerCounts[guess]--;
+        }
+
+        for (let i = 0; i < ANS_SIZE; i++) {
+            let guess = currentGuess[i].toUpperCase();
+            let match = matchesArray[i];
+
             setGuessedLetters(prev => {
-                const letterIndex = guessedLetters.findIndex(entry => entry.char === guess);
+                const letterIndex = prev.findIndex(entry => entry.char === guess);
                 let guessedLettersEntry = {"char": guess, "match": match, "position": i};
 
                 if (letterIndex === -1) {
@@ -208,7 +232,7 @@ function App() {
                 }
 
                 if (prev[letterIndex].match === "almost-correct" && match === "correct") {
-                    let updated = prev;
+                    let updated = prev.slice();
                     updated[letterIndex] = { char: guess, match, position: i };
                     return updated;
                 }
@@ -234,9 +258,12 @@ function App() {
             await sleep(300);
         }
 
-        setUpdateKeyboard(true);
-        setIsAnimating(false);
-        setCurrentRowIndex(prev => prev + 1);
+        setCurrentRowIndex(prev => {
+            const next = prev + 1;
+            setUpdateKeyboard(true);
+            setIsAnimating(false);
+            return next;
+        });
 
         if (inputWord === answer) {
             setIsGameActive(false);
@@ -275,11 +302,12 @@ function App() {
         
         setCurrentGuess(prev => [...prev, key.toUpperCase()]);
         setRows(prev => {
-            prev[currentRowIndex][currentGuess.length] = {
+            const next = prev.slice();
+            next[currentRowIndex][currentGuess.length] = {
                 char: key.toUpperCase(),
                 state: "highlighted",
             };
-            return prev;
+            return next;
         });
     }, [currentRowIndex, currentGuess, isGameActive, ANS_SIZE]);
 
@@ -330,10 +358,11 @@ function App() {
         if (!isGameActive) return;
         if (currentGuess.length >= 1) {
             setRows(prev => {
-                prev[currentRowIndex][currentGuess.length - 1] = {
+                const next = prev.slice();
+                next[currentRowIndex][currentGuess.length - 1] = {
                     char: ""
                 };
-                return prev;
+                return next;
             });
             setCurrentGuess(prev => prev.slice(0, -1));
         }
