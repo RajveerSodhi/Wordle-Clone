@@ -27,6 +27,8 @@ function App() {
     const ansSets = useRef({});
     const wordSets = useRef({});
 
+    const vocabLoaded = useRef(false);
+
     useEffect(() => {
         async function loadWords() {
             for (const len of [3, 4, 5, 6, 7]) {
@@ -36,6 +38,8 @@ function App() {
                 ansSets.current[len] = new Set(ansText.split('\n').map(w => w.trim()));
                 wordSets.current[len] = new Set(wordText.split('\n').map(w => w.trim()));
             }
+
+            vocabLoaded.current = true;
         }
 
         loadWords();
@@ -57,6 +61,8 @@ function App() {
     }
 
     const isValid = useCallback((word) => {
+        if (!vocabLoaded.current) return true;
+
         const len = word.length;
         return (
             ansSets.current[len]?.has(word) ||
@@ -71,6 +77,8 @@ function App() {
     const answer = decrypt(code || '').toUpperCase();
 
     useEffect(() => {
+        if (!vocabLoaded.current) return;
+
         (async () => {
             const lengthOk = answer.length <= 7;
             const regexOk = isCustom ? true : /^[a-z]+$/i.test(answer);
