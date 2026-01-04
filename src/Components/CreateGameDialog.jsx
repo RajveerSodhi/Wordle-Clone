@@ -73,13 +73,13 @@ function CreateGameDialog({onClose, setToastType, showLobbyScreen}) {
 
                             <div className="char-limit-desc">
                                 <span className="min-lim">3 ≤</span>
-                                <span className={`curr-chars ${customChars >= 3 && customChars <= 8 ? "" : "show-invalid"}`}>{customChars}</span>
-                                <span className="max-lim">≤ 8</span>
+                                <span className={`curr-chars ${customChars >= 3 && customChars <= 7 ? "" : "show-invalid"}`}>{customChars}</span>
+                                <span className="max-lim">≤ 7</span>
                             </div>
                         </div>
                 </div>
 
-                <button onClick={getCustomLink} disabled={!(customChars >= 3 && customChars <= 8 && /^[a-z]+$/i.test(inputValue))} className="main-btn copy-custom-link-btn">Copy Custom Link <MdOutlineContentCopy className="btn-icon"/></button>
+                <button onClick={getCustomLink} disabled={!(customChars >= 3 && customChars <= 7 && /^[a-z]+$/i.test(inputValue))} className="main-btn copy-custom-link-btn">Copy Custom Link <MdOutlineContentCopy className="btn-icon"/></button>
             </motion.div>
         </>
     );

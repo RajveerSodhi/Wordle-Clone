@@ -45,7 +45,6 @@ function SettingsDialog({ onClose, max_guesses, ans_size, setAnsSize, setMaxGues
                         <option value="5">5</option>
                         <option value="6">6</option>
                         <option value="7">7</option>
-                        <option value="8">8</option>
                     </select>
                 </section>
 

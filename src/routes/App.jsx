@@ -75,7 +75,7 @@ function App() {
 
     useEffect(() => {
         (async () => {
-            const lengthOk = answer.length <= 8;
+            const lengthOk = answer.length <= 7;
             const regexOk = isCustom ? true : /^[a-z]+$/i.test(answer);
             const dictOk  =  isCustom ? true : await isValid(answer);
 
