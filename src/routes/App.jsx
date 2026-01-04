@@ -32,8 +32,8 @@ function App() {
     useEffect(() => {
         async function loadWords() {
             for (const len of [3, 4, 5, 6, 7]) {
-                const ansText = await fetch(`/Vocabulary/len_${len}_ans.txt`).then(r => r.text());
-                const wordText = await fetch(`/Vocabulary/len_${len}_words.txt`).then(r => r.text());
+                const ansText = await fetch(`/vocab/len_${len}_ans.txt`).then(r => r.text());
+                const wordText = await fetch(`/vocab/len_${len}_words.txt`).then(r => r.text());
 
                 ansSets.current[len] = new Set(ansText.split('\n').map(w => w.trim()));
                 wordSets.current[len] = new Set(wordText.split('\n').map(w => w.trim()));
@@ -47,7 +47,7 @@ function App() {
 
     // get answer from parameters
     function decrypt(code) {
-        const chars = "AaBbCcDdEeFfGgHhIiJjKlLkMmOnNoPpQqRrSsTtUuVvWwXxYyZz";
+        const chars = "AaBbCcDdEeFfGgHhIiJjKkLlMmOnNoPpQqRrSsTtUuVvWwXxYyZz";
         let result = "";
         let shift = code.length;
         let charsLength = chars.length;
@@ -97,7 +97,6 @@ function App() {
         ["z", "x", "c", "v", "b", "n", "m"]
     ];
     const blankGuess = { char: "", state: "idle", celebrate: false, match: "incorrect", shake: false };
-    // const blankKey = { char: "", state: "idle", match: "incorrect" };
 
     // state variables
     let [MAX_GUESSES, setMaxGuesses] = useState(6);

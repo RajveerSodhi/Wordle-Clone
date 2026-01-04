@@ -8,7 +8,7 @@ function RootRedirect() {
     const ANS_SIZE = parseInt(searchParams.get('length')) || 5;
 
     function encrypt(word) {
-        const chars = "AaBbCcDdEeFfGgHhIiJjKlLkMmOnNoPpQqRrSsTtUuVvWwXxYyZz";
+        const chars = "AaBbCcDdEeFfGgHhIiJjKkLlMmOnNoPpQqRrSsTtUuVvWwXxYyZz";
         let result = "";
         let shift = word.length;
         let charsLength = chars.length;
