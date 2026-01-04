@@ -22,25 +22,25 @@ import SettingsDialog from '../Components/SettingsDialog';
 import CreateGameDialog from '../Components/CreateGameDialog';
 import LobbyScreen from '../Components/LobbyScreen';
 
-// get vocabulary
-const ansSets = useRef({});
-const wordSets = useRef({});
-
-useEffect(() => {
-    async function loadWords() {
-        for (const len of [3, 4, 5, 6, 7]) {
-            const ansText = await fetch(`/Vocabulary/len_${len}_ans.txt`).then(r => r.text());
-            const wordText = await fetch(`/Vocabulary/len_${len}_words.txt`).then(r => r.text());
-
-            ansSets.current[len] = new Set(ansText.split('\n').map(w => w.trim()));
-            wordSets.current[len] = new Set(wordText.split('\n').map(w => w.trim()));
-        }
-    }
-
-    loadWords();
-}, []);
-
 function App() {
+    // get vocabulary
+    const ansSets = useRef({});
+    const wordSets = useRef({});
+
+    useEffect(() => {
+        async function loadWords() {
+            for (const len of [3, 4, 5, 6, 7]) {
+                const ansText = await fetch(`/Vocabulary/len_${len}_ans.txt`).then(r => r.text());
+                const wordText = await fetch(`/Vocabulary/len_${len}_words.txt`).then(r => r.text());
+
+                ansSets.current[len] = new Set(ansText.split('\n').map(w => w.trim()));
+                wordSets.current[len] = new Set(wordText.split('\n').map(w => w.trim()));
+            }
+        }
+
+        loadWords();
+    }, []);
+
     // get answer from parameters
     function decrypt(code) {
         const chars = "AaBbCcDdEeFfGgHhIiJjKlLkMmOnNoPpQqRrSsTtUuVvWwXxYyZz";
