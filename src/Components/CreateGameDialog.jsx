@@ -8,7 +8,7 @@ import { useState } from "react";
 function CreateGameDialog({onClose, setToastType, showLobbyScreen}) {
     const [customChars, setCustomChars] = useState(0);
     const [inputValue, setInputValue] = useState('');
-    const gameExamples = ["HBDAY", "BFF", "SCHOOL", "POTTER", "HOGWARTS", "WELCOME", "SWITCH", "RAJVEER", "PRANK", "FISH", "FIFA", "JUHI", "ARSH", "ASH", "SQUIRTLE", "TRUMP", "JAPAN", "ILOVEYOU", "GANESHA", "PREMJEET", "SIMRAN"];
+    const gameExamples = ["HBDAY", "BFF", "SCHOOL", "POTTER", "WELCOME", "SWITCH", "RAJVEER", "PRANK", "FISH", "FIFA", "JUHI", "ARSH", "ASH", "PIKACHU", "TRUMP", "JAPAN", "ILOVEU", "SIMRAN"];
 
     const handleInputChange = (event) => {
         const value = event.target.value;
