@@ -1,5 +1,5 @@
 const fs = require('fs');
-fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
+fs.readFile('words.txt', 'utf8', (err: any, data: string) => {
     if (err) {
         console.error('Error reading the file: ' + err);
         return;
@@ -9,7 +9,7 @@ fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
     const lines = data.split('\n');
 
     for (const line of lines) {
-        let word = line.trim().toLowerCase();
+        let word = line.trim().toUpperCase();
 
         words.push(word);
     }
@@ -27,28 +27,28 @@ fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
     let len7Ans: string[] = [];
 
     function processWord(word: string, wordList: string[], ansList: string[]) {
-        const badEndings = ["ed", "ing", "ly"];    
+        const badEndings = ["ED", "ING", "LY"];    
         for (const ending of badEndings) {
             if (word.endsWith(ending)) { wordList.push(word); return; }
         }
 
-        const inappropriateWords = ["fuck", "penis", "dick", "vagina", "cock", "shit", "cunt", "boob"];
+        const inappropriateWords = ["FUCK", "PENIS", "DICK", "VAGINA", "COCK", "SHIT", "CUNT", "BOOB"];
         for (const inapp of inappropriateWords) {
             if (word.includes(inapp)) { wordList.push(word); return; }
         }
 
         if (
-            word.endsWith("s") &&
-            !word.endsWith("ss") &&
-            !word.endsWith("us") &&
-            !word.endsWith("is")
+            word.endsWith("S") &&
+            !word.endsWith("SS") &&
+            !word.endsWith("US") &&
+            !word.endsWith("IS")
         ) { wordList.push(word); return; }
 
-        if (!/[aeiouy]/.test(word)) { wordList.push(word); return; }
+        if (!/[AEIOUY]/.test(word)) { wordList.push(word); return; }
 
-        if ((word.match(/[aeiouy]/g)?.length ?? 0) >= 4) { wordList.push(word); return; }
+        if ((word.match(/[AEIOUY]/g)?.length ?? 0) >= 4) { wordList.push(word); return; }
 
-        if ((word.match(/[qjxvz]/g)?.length ?? 0) > 2) { wordList.push(word); return; }
+        if ((word.match(/[QJXVZ]/g)?.length ?? 0) > 2) { wordList.push(word); return; }
 
         let wordMap: Map<string, number> = new Map<string, number>();
         for (const char of word) {
@@ -88,7 +88,7 @@ fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
 
     console.log("words: " + totalWords);
 
-    fs.writeFile('Utils/len_3_words.txt', len3Words.join('\n'), (err: any) => {
+    fs.writeFile('len_3_words.txt', len3Words.join('\n'), (err: any) => {
         if (err) {
             console.error('Error writing to the file: ' + err);
             return;
@@ -96,7 +96,7 @@ fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
         console.log('Len 3 words have been written to the file.');
     });
 
-    fs.writeFile('Utils/len_4_words.txt', len4Words.join('\n'), (err: any) => {
+    fs.writeFile('len_4_words.txt', len4Words.join('\n'), (err: any) => {
         if (err) {
             console.error('Error writing to the file: ' + err);
             return;
@@ -104,7 +104,7 @@ fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
         console.log('Len 4 words have been written to the file.');
     });
 
-    fs.writeFile('Utils/len_5_words.txt', len5Words.join('\n'), (err: any) => {
+    fs.writeFile('len_5_words.txt', len5Words.join('\n'), (err: any) => {
         if (err) {
             console.error('Error writing to the file: ' + err);
             return;
@@ -112,7 +112,7 @@ fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
         console.log('Len 5 words have been written to the file.');
     });
 
-    fs.writeFile('Utils/len_6_words.txt', len6Words.join('\n'), (err: any) => {
+    fs.writeFile('len_6_words.txt', len6Words.join('\n'), (err: any) => {
         if (err) {
             console.error('Error writing to the file: ' + err);
             return;
@@ -120,7 +120,7 @@ fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
         console.log('Len 6 words have been written to the file.');
     });
 
-    fs.writeFile('Utils/len_7_words.txt', len7Words.join('\n'), (err: any) => {
+    fs.writeFile('len_7_words.txt', len7Words.join('\n'), (err: any) => {
         if (err) {
             console.error('Error writing to the file: ' + err);
             return;
@@ -129,7 +129,7 @@ fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
     });
 
 
-    fs.writeFile('Utils/len_3_ans.txt', len3Ans.join('\n'), (err: any) => {
+    fs.writeFile('len_3_ans.txt', len3Ans.join('\n'), (err: any) => {
         if (err) {
             console.error('Error writing to the file: ' + err);
             return;
@@ -137,7 +137,7 @@ fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
         console.log('Len 3 ans have been written to the file.');
     });
 
-    fs.writeFile('Utils/len_4_ans.txt', len4Ans.join('\n'), (err: any) => {
+    fs.writeFile('len_4_ans.txt', len4Ans.join('\n'), (err: any) => {
         if (err) {
             console.error('Error writing to the file: ' + err);
             return;
@@ -145,7 +145,7 @@ fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
         console.log('Len 4 ans have been written to the file.');
     });
 
-    fs.writeFile('Utils/len_5_ans.txt', len5Ans.join('\n'), (err: any) => {
+    fs.writeFile('len_5_ans.txt', len5Ans.join('\n'), (err: any) => {
         if (err) {
             console.error('Error writing to the file: ' + err);
             return;
@@ -153,7 +153,7 @@ fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
         console.log('Len 5 ans have been written to the file.');
     });
 
-    fs.writeFile('Utils/len_6_ans.txt', len6Ans.join('\n'), (err: any) => {
+    fs.writeFile('len_6_ans.txt', len6Ans.join('\n'), (err: any) => {
         if (err) {
             console.error('Error writing to the file: ' + err);
             return;
@@ -161,7 +161,7 @@ fs.readFile('Utils/words.txt', 'utf8', (err: any, data: string) => {
         console.log('Len 6 ans have been written to the file.');
     });
 
-    fs.writeFile('Utils/len_7_ans.txt', len7Ans.join('\n'), (err: any) => {
+    fs.writeFile('len_7_ans.txt', len7Ans.join('\n'), (err: any) => {
         if (err) {
             console.error('Error writing to the file: ' + err);
             return;
