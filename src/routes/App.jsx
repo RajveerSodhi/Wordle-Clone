@@ -22,6 +22,24 @@ import SettingsDialog from '../Components/SettingsDialog';
 import CreateGameDialog from '../Components/CreateGameDialog';
 import LobbyScreen from '../Components/LobbyScreen';
 
+// get vocabulary
+const ansSets = useRef({});
+const wordSets = useRef({});
+
+useEffect(() => {
+    async function loadWords() {
+        for (const len of [3, 4, 5, 6, 7]) {
+            const ansText = await fetch(`/Vocabulary/len_${len}_ans.txt`).then(r => r.text());
+            const wordText = await fetch(`/Vocabulary/len_${len}_words.txt`).then(r => r.text());
+
+            ansSets.current[len] = new Set(ansText.split('\n').map(w => w.trim()));
+            wordSets.current[len] = new Set(wordText.split('\n').map(w => w.trim()));
+        }
+    }
+
+    loadWords();
+}, []);
+
 function App() {
     // get answer from parameters
     function decrypt(code) {
@@ -38,33 +56,12 @@ function App() {
         return result;
     }
 
-    const isValid = useCallback(async (word) => {
-        const knownFalseNegatives = ["TOUCH", "MINTY"];
-        const knownFalsePositives = [];
-        const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
-        try {
-            if (knownFalseNegatives.includes(word)) {
-                return true;
-            }
-
-            if (knownFalsePositives.includes(word)) {
-                return false;
-            }
-
-            const res = await fetch(url);
-
-            if (res.status === 404) {
-                return false;
-            }
-            if (!res.ok) {
-                throw new Error(`Dictionary API error ${res.status}`);
-            }
-
-            return true;
-        } catch (err) {
-            console.error(err);
-            return false;
-        }
+    const isValid = useCallback((word) => {
+        const len = word.length;
+        return (
+            ansSets.current[len]?.has(word) ||
+            wordSets.current[len]?.has(word)
+        );
     }, []);
 
     const navigate = useNavigate();
@@ -114,7 +111,6 @@ function App() {
     let [showSettingsDialog, setShowSettingsDialog] = useState(false);
     let [showCreateGameDialog, setShowCreateGameDialog] = useState(false);
     let [isAnimating, setIsAnimating] = useState(false); 
-    // let [keys, setKeys] = useState(Array.from({ length: 26 }, () => ({ ...blankKey })))
     let enteredWords = useRef(new Map());
     
     const submitGuess = useCallback(async () => {
@@ -239,11 +235,6 @@ function App() {
 
                 return prev;
             });
-
-            // if (!guessedLetters.some(entry => entry.char === guess) || (guessedLetters.some(entry => entry.char === guess && entry.match === "almost-correct") && match === "correct")) {
-            //     let guessedLettersEntry = {"char": guess, "match": match, "position": i};
-            //     setGuessedLetters(prev => [...prev, guessedLettersEntry]);
-            // }
 
             setRows(prev => {
                 const newRows = prev.map(row => [...row]);
